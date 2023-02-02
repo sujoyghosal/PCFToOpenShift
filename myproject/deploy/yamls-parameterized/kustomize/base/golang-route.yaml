@@ -1,0 +1,23 @@
+
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+    creationTimestamp: null
+    labels:
+        move2kube.konveyor.io/service: golang
+    name: golang
+spec:
+    host: https://c130-e.us-south.containers.cloud.ibm.com:30958
+    path: /golang
+    port:
+        targetPort: port-8080
+    to:
+        kind: Service
+        name: golang
+        weight: 1
+status:
+    ingress:
+        - {}
+
+...

@@ -2,11 +2,13 @@
 const express = require("express");
 const mongodb = require("mongodb");
 const recordRoutes = express.Router();
+const { exec } = require("child_process");
 var http = require("http");
 const fs = require("fs");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const PORT = process.env.PORT || 5555;
+var eventDocument = null;
 const app = express();
 var loggedinUsers = [];
 app.use(cors());
@@ -343,23 +345,14 @@ app.get("/eventsbyemailandtype", (req, res) => {
 });
 //Create Event
 app.post("/events/insert", (req, res) => {
-  var channel =
-    "DONATE-" +
-    req.body.city.toString().toUpperCase() +
-    "-" +
-    req.body.itemtype.toString().toUpperCase();
-  const eventDocument = {
+  console.log("Received array " + JSON.stringify(req.body));
+  eventDocument = {
     email: req.body.email,
-    postedby: req.body.postedby,
     time_created: Date().toString(),
-    phone_number: req.body.phone_number,
-    address: req.body.address,
-    city: req.body.city.toString().trim().toUpperCase(),
-    items: req.body.items,
-    itemtype: req.body.itemtype.toString().trim().toUpperCase(),
-    location: req.body.location,
-    fa_icon: req.body.fa_icon,
-    event_type: "DONATE",
+    event_type: "top level scan",
+    file_type: req.body.type,
+    file_number: req.body.file_number,
+    results: req.body.results,
   };
   createEvent(eventDocument, req, res);
 });
@@ -368,49 +361,26 @@ app.post("/events/insert", (req, res) => {
 //app.post("/events/insert", (req, res) => {
 function createEvent(obj, req, res) {
   console.log("Event document = " + JSON.stringify(obj));
-  var channel =
-    obj.event_type +
-    "-" +
-    obj.itemtype.trim().toUpperCase() +
-    "-" +
-    obj.city.trim().toUpperCase();
-  const eventDocument = {
-    event_type: obj.event_type,
-    event_name: channel,
-    city: obj.city.trim().toUpperCase(),
-    location: {
-      type: "Point",
-      coordinates: [obj.location.longitude, obj.location.latitude],
-    },
-    postedby: obj.postedby,
-    phone_number: obj.phone_number,
-    email: obj.email,
-    address: obj.address,
-    itemtype: obj.itemtype,
-    items: obj.items,
-    fa_icon: obj.fa_icon,
-    time_created: new Date().toLocaleString(),
-  };
-  dbConnection
-    .collection("Events")
-    .insertOne(eventDocument, function (err, result) {
-      if (err) {
-        console.error(JSON.stringify(err));
-        res.status(401).send(err);
-      } else {
-        console.log(`Added a new event with id ${result.insertedId}`);
-        console.log("Sending event to subscribers of channel " + channel);
-        io.sockets.in(channel).emit("event", {
-          event_id: result.insertedId,
-          eventDetails: eventDocument,
-        });
-        res.status(201).send("Success");
-      }
-    });
+  var channel = obj.email;
+
+  dbConnection.collection("Events").insertOne(obj, function (err, result) {
+    if (err) {
+      console.error(JSON.stringify(err));
+      res.status(401).send(err);
+    } else {
+      console.log(`Added a new event with id ${result.insertedId}`);
+      console.log("Sending event to subscribers of channel " + channel);
+      io.sockets.in(channel).emit("new-scan", {
+        event_id: result.insertedId,
+        eventDetails: obj,
+      });
+      res.status(200).send("Success");
+    }
+  });
   //dbConnection.collection("Events").createIndex({ location: "2dsphere" });
-  const eventsCollection = dbConnection.collection("Events");
-  const result = eventsCollection.createIndex({ location: "2dsphere" });
-  console.log(`Index created: ${result}`);
+  /*const eventsCollection = dbConnection.collection("Events");
+  const result = eventsCollection.createIndex({ location: "2dsphere" });*/
+  //console.log(`Index created: ${result}`);
 }
 //Get Events By Subscription
 app.post("/fetchevents", (req, res) => {
@@ -440,70 +410,23 @@ app.post("/fetchevents", (req, res) => {
     });
 });
 //Neaby Events for my subscribed geo location options
-app.get("/fetchmynearbyevents", (req, res) => {
-  dbConnection
-    .collection("Events")
-    .find({
-      location: {
-        $near: {
-          $geometry: {
-            type: "Point",
-            coordinates: [Number(req.query.lng), Number(req.query.lat)],
-          },
-          $maxDistance: Number(req.query.max_distance),
-        },
-      },
-    })
-    .limit(200)
-    .toArray(function (err, result) {
-      if (err) {
-        console.log("fetchmynearbyevents: Failed to fetch event  " + err);
-        res.status(400).send("Error fetching event!" + err);
-      } else {
-        //res.json(result);
-        if (result && result.length > 0) {
-          res.status(200).send(result);
-          console.log("fetchmynearbyevents: Success fetching nearby events ");
-        } else {
-          res.jsonp([]);
-          console.log("ifetchmynearbyevents: No events");
-        }
-      }
-    });
+app.get("/topscan", (req, res) => {
+  console.log("received top level scan request from " + req.query.email);
+  console.log("Response: " + JSON.stringify(eventDocument));
+  res.jsonp(eventDocument);
 });
-function sendEventToNearbySubscribedUsers(lng, lat, max_dist, event) {
-  dbConnection
-    .collection("Users")
-    .find({
-      event_receive_location: {
-        $near: {
-          $geometry: {
-            type: "Point",
-            coordinates: [Number(lng), Number(lat)],
-          },
-          $event_receive_max_distance: Number(max_dist),
-        },
-      },
-    })
-    .limit(200)
-    .toArray(function (err, result) {
-      if (err) {
-        console.log("fetchmynearbyevents: Failed to fetch event  " + err);
-        res.status(400).send("Error fetching event!" + err);
-      } else {
-        //res.json(result);
-        if (result && result.length > 0) {
-          res.status(200).send(result);
-          console.log(
-            "fetchmynearbyevents: Success fetching nearby users subscribed to location events. " +
-              JSON.stringify(result)
-          );
-        } else {
-          res.jsonp([]);
-          console.log("ifetchmynearbyevents: No events");
-        }
-      }
-    });
+function runShellScript(command) {
+  exec(command, (error, stdout, stderr) => {
+    if (error) {
+      console.log(`error: ${error.message}`);
+      return;
+    }
+    if (stderr) {
+      console.log(`stderr: ${stderr}`);
+      return;
+    }
+    console.log(`stdout: ${stdout}`);
+  });
 }
 //Event Update
 app.put("/events/update", (req, res) => {

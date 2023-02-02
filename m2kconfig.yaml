@@ -1,0 +1,123 @@
+move2kube:
+  minreplicas: "2"
+  services:
+    django:
+      "8080":
+        servicetype: Ingress
+        urlpath: /django
+      enable: true
+      port: "8080"
+    golang:
+      "8080":
+        servicetype: Ingress
+        urlpath: /golang
+      enable: true
+      ports:
+        - "8080"
+    java-gradle:
+      "9080":
+        servicetype: Ingress
+        urlpath: /java-gradle
+      childModules:
+        java-gradle:
+          port: "8080"
+      dockerfileType: no build stage
+      enable: true
+      wartransformer: Liberty
+    java-maven:
+      "9080":
+        servicetype: Ingress
+        urlpath: /java-maven
+      childModules:
+        java-maven:
+          port: "8080"
+      dockerfileType: no build stage
+      enable: true
+      wartransformer: Liberty
+    java-war:
+      "9080":
+        servicetype: Ingress
+        urlpath: /java-war
+      enable: true
+      wartransformer: Liberty
+    nodejs:
+      "8080":
+        servicetype: Ingress
+        urlpath: /nodejs
+      enable: true
+      port: "8080"
+    php:
+      "8082":
+        servicetype: Ingress
+        urlpath: /php
+      enable: true
+    python:
+      "8080":
+        servicetype: Ingress
+        urlpath: /python
+      enable: true
+      port: "8080"
+    ruby:
+      "8080":
+        servicetype: Ingress
+        urlpath: /ruby
+      enable: true
+      port: "8080"
+    rust:
+      "8085":
+        servicetype: Ingress
+        urlpath: /rust
+      enable: true
+      port: "8085"
+  target:
+    default:
+      clustertype: IBM-Openshift
+      ingress:
+        host: https://c130-e.us-south.containers.cloud.ibm.com:30958
+    imageregistry:
+      https://c130-e.us-south.containers.cloud.ibm.com:30958:
+        logintype: username and password
+        username: sujoy.ghosal@gds.ey.com
+      namespace: test
+      quay.io:
+        logintype: no authentication
+      url: quay.io
+  transformers:
+    types:
+      - ArgoCD
+      - Buildconfig
+      - CloudFoundry
+      - ClusterSelector
+      - ComposeAnalyser
+      - ComposeGenerator
+      - ContainerImagesPushScriptGenerator
+      - DockerfileDetector
+      - DockerfileImageBuildScript
+      - DockerfileParser
+      - DotNetCore-Dockerfile
+      - EarAnalyser
+      - EarRouter
+      - Golang-Dockerfile
+      - Gradle
+      - Jar
+      - Jboss
+      - Knative
+      - Kubernetes
+      - KubernetesVersionChanger
+      - Liberty
+      - Maven
+      - Nodejs-Dockerfile
+      - OperatorTransformer
+      - PHP-Dockerfile
+      - Parameterizer
+      - Python-Dockerfile
+      - ReadMeGenerator
+      - Ruby-Dockerfile
+      - Rust-Dockerfile
+      - Tekton
+      - Tomcat
+      - WarAnalyser
+      - WarRouter
+      - WinWebApp-Dockerfile
+      - ZuulAnalyser
+  transformerselector: ""

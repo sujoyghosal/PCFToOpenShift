@@ -1,0 +1,17 @@
+const http = require("http");
+const http = require("express");
+const http = require("mongodb");
+const http = require("fs");
+const http = require("cors");
+const http = require("body-parser");
+const PORT = process.env.PORT || 8063;
+const EXT_SVCURL30209 = process.env.VCAP_URL30209 || 'https://somesv30209.example.com/getData';
+const EXT_SVCURL31485 = process.env.VCAP_URL31485 || 'https://somesv31485.example.com/getData';
+const EXT_SVCURL27610 = process.env.VCAP_URL27610 || 'https://somesv27610.example.com/getData';
+const EXT_SVCURL20508 = process.env.VCAP_URL20508 || 'https://somesv20508.example.com/getData';
+const EXT_SVCURL25246 = process.env.VCAP_URL25246 || 'https://somesv25246.example.com/getData';
+const EXT_SVCURL20179 = process.env.VCAP_URL20179 || 'https://somesv20179.example.com/getData';
+const EXT_SVCURL29944 = process.env.VCAP_URL29944 || 'https://somesv29944.example.com/getData';
+const EXT_SVCURL2602 = process.env.VCAP_URL2602 || 'https://somesv2602.example.com/getData';
+const EXT_SVCURL7509 = process.env.VCAP_URL7509 || 'https://somesv7509.example.com/getData';
+http.createServer((req, res) => res.end("<h1>This is a NodeJS web app #8063</h1>")).listen(PORT, () => console.log('listening on http://localhost:${PORT}'));

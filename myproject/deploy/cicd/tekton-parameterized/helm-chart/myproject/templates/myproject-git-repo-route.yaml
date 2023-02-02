@@ -1,0 +1,23 @@
+
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+    creationTimestamp: null
+    labels:
+        move2kube.konveyor.io/service: myproject-git-repo
+    name: myproject-git-repo
+spec:
+    host: https://c130-e.us-south.containers.cloud.ibm.com:30958
+    path: /el-myproject-git-repo
+    port:
+        targetPort: port-8080
+    to:
+        kind: Service
+        name: myproject-git-repo
+        weight: 1
+status:
+    ingress:
+        - {}
+
+...

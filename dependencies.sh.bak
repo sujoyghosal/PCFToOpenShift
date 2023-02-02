@@ -1,0 +1,245 @@
+jsfiles=
+pyfiles=
+pyfilescount=
+gofiles=
+gofilescount=
+rbfiles=
+rbfilescount=
+phpfiles=
+phpfilescount=
+email=$1
+deps=
+echo "Welcome to the Discovery app for migration"
+echo "Enter folder path to scan"
+read answer
+echo "Checking Node.js files..."
+jsjson={}
+scan_array="["
+deps_array="["
+yml_array="["
+pj_array="["
+find $answer -name *.js|grep -v node_modules>/tmp/jsout
+if [ -s /tmp/jsout ] 
+then
+	while read line 
+	do
+		f=`echo $line|sed 's/^/"/g'|sed 's/$/",/g'`	
+		f=`echo $f|sed 's/,$//'`
+		jsfiles="$jsfiles $line"
+		e=`grep require\( $line|cut -f2 -d"("|sed 's/[");]//g'`
+		c=`grep require\( $line|wc -l`
+		deps=`jo -p -a $e`
+		env_vars=`grep process.env. $line|sed 's/^.*process.env.//g'`
+		env_vars_count=`grep process.env. $line|wc -l`
+		env_vars=`jo -p -a "$env_vars"`
+		depsjson=`jo -p type=javascript file="$line" dependencies="$deps" count_of_dependencies="$c" env_vars="$env_vars" env_vars_count="$env_vars_count"`
+		#deps_array=`jo -p -a "$deps_array" "$depsjson"`
+		deps_array=$deps_array$depsjson","
+	done</tmp/jsout
+	deps_array=`echo $deps_array|sed 's/,$//g'`"]"
+	echo "Deps Array=$deps_array"
+	jsfilescount=`wc -l /tmp/jsout|awk '{print $1}'`
+	echo "Found $jsfilescount JavaScript files"
+	jsfiles=`jo -p -a "$jsfiles"`
+	#jsjson=`jo -p type=javascript files="$jsfiles" count=$jsfilescount dependencies="$deps_array" email=$email`
+	jsjson=`jo -p type=javascript  files_count=$jsfilescount dependencies="$deps_array" email=$email`
+	scan_array=$scan_array$jsjson
+	echo "Sending JS details to server"
+#	curl --location --request POST 'http://localhost:5555/events/insert' \
+#	--header 'Content-Type: application/json' \
+#	--data-raw "$jsjson"
+	echo ":)"
+fi
+echo "Checking package.json files..."
+pjjson={}
+find $answer -name package.json|grep -v node_modules>/tmp/pjout
+if [ -s /tmp/pjout ] 
+then
+	while read line 
+	do
+		f=`echo $line|sed 's/^/"/g'|sed 's/$/",/g'`	
+		f=`echo $f|sed 's/,$//'`
+		pjfiles="$pjfiles $line"
+		c=`awk '/dependencies/{ f = 1; next } /}/{ f = 0 } f' $line`
+		pjobj=`jo -p type=package.json file="$line" content="$c"`
+		pj_array=$pj_array$pjobj","
+	done</tmp/pjout
+	pj_array=`echo $pj_array|sed 's/,$//g'`"]"
+	pjfilescount=`wc -l /tmp/pjout|awk '{print $1}'`
+	echo "Found $pjfilescount package.json files"
+	pjfiles=`jo -p -a "$pjfiles"`
+	pjjson=`jo -p type=package.json files="$pjfiles" count=$pjfilescount content="$pj_array"`
+	scan_array=$scan_array","$pjjson
+	echo "Sending package.json details to server"
+#	curl --location --request POST 'http://localhost:5555/events/insert' \
+#	--header 'Content-Type: application/json' \
+#	--data-raw "$pjjson"
+	echo ":)"
+fi
+echo "Checking for config yml files..."
+gojson={}
+find $answer -name *.yml|grep -v node_modules>/tmp/ymlout
+if [ -s /tmp/ymlout ] 
+then
+	while read line 
+	do
+		f=`echo $line|sed 's/^/"/g'|sed 's/$/",/g'`	
+		f=`echo $f|sed 's/,$//'`
+		ymlfiles="$ymlfiles $line"
+		c=`cat $line`
+		ymlobj=`jo -p type=yml file="$line" content="$c"`
+		yml_array=$yml_array$ymlobj","
+	done</tmp/ymlout
+	yml_array=`echo $yml_array|sed 's/,$//g'`"]"
+	ymlfilescount=`wc -l /tmp/ymlout|awk '{print $1}'`
+	echo "Found $ymlfilescount Go files"
+	ymlfiles=`jo -p -a "$ymlfiles"`
+	#ymljson=`jo -p type="YML" files="$ymlfiles" count=$ymlfilescount content="$yml_array"`
+	ymljson=`jo -p type="YML" count=$ymlfilescount content="$yml_array"`
+	scan_array=$scan_array","$ymljson
+	echo "Sending YML details to server"
+#	curl --location --request POST 'http://localhost:5555/events/insert' \
+#	--header 'Content-Type: application/json' \
+#	--data-raw "$gojson"
+	echo ":)"
+fi
+echo "Checking Python files..."
+pyjson={}
+find $answer -name *.py>/tmp/pyout
+if [ -s /tmp/pyout ] 
+then
+	while read line 
+	do
+		f=`echo $line|sed 's/^/"/g'|sed 's/$/",/g'`	
+		f=`echo $f|sed 's/,$//'`
+		pyfiles="$pyfiles $line"
+	done</tmp/pyout
+	pyfilescount=`wc -l  /tmp/pyout|awk '{print $1}'`
+	echo "Found $pyfilescount Python files"
+	pyfiles=`jo -p -a "$pyfiles"`
+	pyjson=`jo -p type=python files="$pyfiles" count=$pyfilescount email=$email`
+	scan_array=$scan_array","$pyjson
+	echo "Sending python details to server"
+#	curl --location --request POST 'http://localhost:5555/events/insert' \
+#	--header 'Content-Type: application/json' \
+#	--data-raw "$pyjson"
+	echo ":)"
+fi
+echo "Checking Go files..."
+gojson={}
+find $answer -name *.go>/tmp/goout
+if [ -s /tmp/goout ] 
+then
+	while read line 
+	do
+		f=`echo $line|sed 's/^/"/g'|sed 's/$/",/g'`	
+		f=`echo $f|sed 's/,$//'`
+		gofiles="$gofiles $line"
+	done</tmp/goout
+	gofilescount=`wc -l /tmp/goout|awk '{print $1}'`
+	echo "Found $gofilescount Go files"
+	gofiles=`jo -p -a "$gofiles"`
+	gojson=`jo -p type=Go files="$gofiles" count=$gofilescount email=$email`
+	scan_array=$scan_array","$gojson
+	echo "Sending Go details to server"
+#	curl --location --request POST 'http://localhost:5555/events/insert' \
+#	--header 'Content-Type: application/json' \
+#	--data-raw "$gojson"
+	echo ":)"
+fi
+echo "Checking Ruby files..."
+rubyjson={}
+find $answer -name *.rb>/tmp/rbout
+if [ -s /tmp/rbout ] 
+then
+	while read line 
+	do
+		f=`echo $line|sed 's/^/"/g'|sed 's/$/",/g'`	
+		f=`echo $f|sed 's/,$//'`
+		rbfiles="$rbfiles $line"
+	done</tmp/rbout
+	rbfilescount=`wc -l /tmp/rbout|awk '{print $1}'`
+	echo "Found $rbfilescount Ruby files"
+	rbfiles=`jo -p -a "$rbfiles"`
+	rubyjson=`jo -p type=ruby files="$rbfiles" count=$rbfilescount email=$email`
+	scan_array=$scan_array","$rubyjson
+	echo "Sending Ruby details to server"
+#	curl --location --request POST 'http://localhost:5555/events/insert' \
+#	--header 'Content-Type: application/json' \
+#	--data-raw "$rubyjson"
+	echo ":)"
+fi
+echo "Checking PHP files..."
+phpjson={}
+find $answer -name *.php>/tmp/phpout
+if [ -s /tmp/phpout ] 
+then
+	while read line 
+	do
+		f=`echo $line|sed 's/^/"/g'|sed 's/$/",/g'`	
+		f=`echo $f|sed 's/,$//'`
+		phpfiles="$phpfiles $line"
+	done</tmp/phpout
+	phpfilescount=`wc -l /tmp/phpout|awk '{print $1}'`
+	echo "Found $phpfilescount PHP files"
+	phpfiles=`jo -p -a "$phpfiles"`
+	phpjson=`jo -p type=php files="$phpfiles" count=$phpfilescount email=$email`
+	scan_array=$scan_array","$phpjson
+	echo "Sending PHP details to server"
+#	curl --location --request POST 'http://localhost:5555/events/insert' \
+#	--header 'Content-Type: application/json' \
+#	--data-raw "$phpjson"
+	echo ":)"
+fi
+
+echo "Checking Java files..."
+javajson={}
+find $answer -name *.java >/tmp/javaout
+if [ -s /tmp/javaout ] 
+then
+	while read line 
+	do
+		f=`echo $line|sed 's/^/"/g'|sed 's/$/",/g'`	
+		f=`echo $f|sed 's/,$//'`
+		javafiles="$javafiles $line"
+	done</tmp/javaout
+	javafilescount=`wc -l /tmp/javaout|awk '{print $1}'`
+	echo "Found $javafilescount Java files"
+	javafiles=`jo -p -a "$javafiles"`
+	javajson=`jo -p type=java files="$javafiles" count=$javafilescount email=$email`
+	scan_array=$scan_array","$javajson
+	echo "Sending Java details to server"
+#	curl --location --request POST 'http://localhost:5555/events/insert' \
+#	--header 'Content-Type: application/json' \
+#	--data-raw "$javajson"
+	echo ":)"
+fi
+echo "Checking pom.xml files..."
+pxjson={}
+find $answer -name pom.xml >/tmp/pxout
+if [ -s /tmp/pxout ] 
+then
+	while read line 
+	do
+		f=`echo $line|sed 's/^/"/g'|sed 's/$/",/g'`	
+		f=`echo $f|sed 's/,$//'`
+		pxfiles="$pxfiles $line"
+	done</tmp/pxout
+	pxfilescount=`wc -l /tmp/pxout|awk '{print $1}'`
+	echo "Found $pxfilescount pom.xml files"
+	pxfiles=`jo -p -a "$pxfiles"`
+	pxjson=`jo -p type=pom.xml files="$pxfiles" count=$pxfilescount email=$email`
+	scan_array=$scan_array","$pxjson
+	echo "Sending pom.xml details to server"
+#	curl --location --request POST 'http://localhost:5555/events/insert' \
+#	--header 'Content-Type: application/json' \
+#	--data-raw "$pxjson"
+	echo ":)"
+fi
+scan_array=$scan_array"]"
+#echo $scan_array
+obj="{ \"email\": \"$email\", \"results\": $scan_array }"
+echo $obj|tee scan_results.json
+curl --location --request POST 'http://localhost:5555/events/insert' \
+	--header 'Content-Type: application/json' \
+	--data-raw "$obj"

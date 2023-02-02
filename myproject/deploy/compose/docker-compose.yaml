@@ -1,0 +1,62 @@
+version: "3.5"
+services:
+  django:
+    container_name: django
+    image: quay.io/test/django:latest
+    ports:
+      - target: 8080
+        published: 8086
+  golang:
+    container_name: golang
+    image: quay.io/test/golang:latest
+    ports:
+      - target: 8080
+        published: 8088
+  java-gradle:
+    container_name: java-gradle
+    image: quay.io/test/java-gradle:latest
+    ports:
+      - target: 9080
+        published: 8081
+  java-maven:
+    container_name: java-maven
+    image: quay.io/test/java-maven:latest
+    ports:
+      - target: 9080
+        published: 8082
+  java-war:
+    container_name: java-war
+    image: quay.io/test/java-war:latest
+    ports:
+      - target: 9080
+        published: 8087
+  nodejs:
+    container_name: nodejs
+    image: quay.io/test/nodejs:latest
+    ports:
+      - target: 8080
+        published: 8089
+  php:
+    container_name: php
+    image: quay.io/test/php:latest
+    ports:
+      - target: 8082
+        published: 8083
+  python:
+    container_name: python
+    image: quay.io/test/python:latest
+    ports:
+      - target: 8080
+        published: 8084
+  ruby:
+    container_name: ruby
+    image: quay.io/test/ruby:latest
+    ports:
+      - target: 8080
+        published: 8080
+  rust:
+    container_name: rust
+    image: quay.io/test/rust:latest
+    ports:
+      - target: 8085
+        published: 8085

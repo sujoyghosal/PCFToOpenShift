@@ -294,10 +294,10 @@ app.controller(
     $scope.result = "";
     $scope.groupusers = [];
     $rootScope.chatArray = [];
-    $rootScope.myText = "";
+    $rootScope.myText = null;
     $scope.SpeakButtonLabe = "Click to Speak";
     $scope.reverseSort = false;
-    $scope.emergency = false;
+    $rootScope.showScanResults = false;
     $rootScope.loggedinUsers = [];
     $scope.synth = window.speechSynthesis;
     $scope.rate = 1;
@@ -544,6 +544,29 @@ app.controller(
         $scope.ID = "red";
         $scope.Speak(data.lang, data.text);
       });
+      socket.on("new-scan", (data) => {
+        $rootScope.showScanResults = true;
+        Notification.info({
+          message: "New Scan Data Arrived", //JSON.stringify(data),
+          title: "New Scan",
+          positionY: "bottom",
+          positionX: "center",
+          delay: 50,
+        });
+        console.log("Event received from server : " + JSON.stringify(data));
+        $rootScope.myText = data.eventDetails.results;
+        $rootScope.context_email = data.eventDetails.email;
+        $rootScope.context_time = data.eventDetails.time_created;
+        $rootScope.context_type = data.eventDetails.event_type;
+        $rootScope.context_source_type = data.eventDetails.file_type;
+        $rootScope.context_file_number = data.eventDetails.file_number;
+        $rootScope.context_deps_count = Number(
+          data.eventDetails.results.count_of_dependencies
+        );
+        $rootScope.context_envvars_count = Number(
+          data.eventDetails.results.env_vars_count
+        );
+      });
 
       socket.on("disconnect", () => {
         socket.removeAllListeners();
@@ -685,6 +708,54 @@ app.controller(
           });
         }
       );
+    };
+    $scope.DoTopLevelScan = function () {
+      $scope.spinner = true;
+      var getURL = BASEURL + "/topscan?email=" + $scope.login_email;
+
+      getURL = encodeURI(getURL);
+      $http({
+        method: "GET",
+        url: getURL,
+      }).then(
+        function successCallback(response) {
+          $scope.spinner = false;
+          console.log(
+            "received response for top level scan: " + JSON.stringify(response)
+          );
+          $rootScope.myText = response.data.results;
+          $rootScope.context_email = response.data.email;
+          $rootScope.context_time = response.data.time_created;
+          $rootScope.context_type = response.data.event_type;
+          $rootScope.showScanResults = true;
+        },
+        function errorCallback(error) {
+          console.log("Error doing top level scan - " + error);
+          $scope.spinner = false;
+        }
+      );
+    };
+    $scope.getIconForFileType = function (type) {
+      if (!type || type.length < 2) return;
+      type = type.toLowerCase();
+      console.log("Fetching ICON for file type" + type);
+      if (type === "javascript" || type === "yml")
+        return "https://img.icons8.com/color/48/null/javascript--v1.png";
+      if (type === "java")
+        return "https://img.icons8.com/nolan/64/java-coffee-cup-logo.png";
+      if (type === "python")
+        return "https://img.icons8.com/fluency/48/null/python.png";
+      if (type === "ruby")
+        return "https://img.icons8.com/fluency/48/null/ruby-programming-language.png";
+      if (type === "pom.xml")
+        return "https://img.icons8.com/nolan/64/java-coffee-cup-logo.png";
+      if (type === "package.json")
+        return "https://img.icons8.com/color/48/null/javascript--v1.png";
+      if (type === "php")
+        return "https://img.icons8.com/arcade/64/null/php.png";
+      if (type === "go")
+        return "https://img.icons8.com/ios-filled/50/null/go.png";
+      return "https://img.icons8.com/nolan/64/java-coffee-cup-logo.png";
     };
     $scope.Login2 = function (login) {
       $scope.spinner = true;
@@ -853,7 +924,8 @@ app.controller(
           };
 
           socket.emit("create-room", {
-            channels: $rootScope.subscribed_events,
+            //channels: $rootScope.subscribed_events,
+            channels: "newscan",
           });
         },
         function errorCallback(error) {

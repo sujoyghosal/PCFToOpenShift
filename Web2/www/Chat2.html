@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+
+<head>
+  <title>Discovery Dashboard</title>
+  <script src="https://kit.fontawesome.com/72f4710995.js" crossorigin="anonymous"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    /* Create two unequal columns that floats next to each other */
+    .column {
+      float: left;
+      padding: 10px;
+      /* Should be removed. Only for demonstration */
+    }
+
+    .left {
+      width: 20%;
+    }
+
+    .right {
+      width: 80%;
+    }
+
+    .row {
+      height: 100px;
+    }
+
+    #blue {
+      /*background: rgb(0, 179, 255);*/
+      color: rgb(17, 42, 230);
+    }
+
+    #red {
+      /*background: rgb(5, 241, 5);*/
+      color: rgb(218, 18, 18);
+    }
+
+    .card {
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+      transition: 0.3s;
+      width: auto;
+    }
+
+    .card:hover {
+      box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+    }
+
+    .container {
+      padding: 2px 16px;
+    }
+
+    .hide {
+      display: none;
+    }
+
+    .myDIV:hover+.hide {
+      display: block;
+      color: red;
+    }
+
+  </style>
+</head>
+
+<body ng-controller="ChatCtrl">
+  <h2>Hi {{username}}</h2>
+  <hr>
+  <br>
+  <!--
+  <div class="row">
+    <div class="column left">
+      <div ng-repeat="row in loggedinUsers" ng-value="row._id">
+        <button type="button" id="{{ID}}" class="btn btn-success btn-xl" ng-click="SpeechToText(srcLang, row)" ng-hide="row.email == login_email">{{row.name}}</button>
+      </div>
+    </div>
+    <div class="column right">
+      <div class="overflow-auto" ng-repeat="row in chatArray">
+        <p align="left" id="{{row.id}}"> <b>{{row.user}}</b>{{': ' + row.text}}</p>
+      </div>
+    </div>
+  </div>-->
+  <button type="button" class="btn btn-info btn-xl" ng-click="DoTopLevelScan(); spinner=true;">Top Level Scan</button>
+  <h5>New Scan Data Received from Server!!</h5>
+  <div ng-show="showScanResults" ng-repeat="row in myText" class="card">
+    <div class="card text-white text-left bg-info mb-3" style="max-width: 50rem;">
+      <img ng-src="{{getIconForFileType(context_source_type) || '' }}" class="img-thumbnail" />
+      <div class="card-body">
+        <p class="card-text"><b>Email: </b>{{context_email}}</p>
+        <p class="card-text"><b>Time: </b>{{context_time}}</p>
+        <p class="card-text"><b>Scan Type: </b>{{context_type}}</p>
+        <p class="card-text"><b>File Type: </b>{{context_source_type}}</p>
+        <p class="card-text"><b>Files Count: </b>{{context_file_number}}</p>
+        <p class="card-text"><b>Source Files: </b>{{row.files}}</p>
+
+        <div ng-repeat="deps in row.dependencies">
+          <p class="card-text"><b>File: </b>{{deps.file}}</p>
+          <p class="card-text"><b>Dependencies: </b>{{deps.dependencies}}</p>
+          <p class="card-text"><b>Count of Dependencies: </b>{{deps.count_of_dependencies}}</p>
+          <p class="card-text"><b>Count of Env Vars: </b>{{deps.env_vars_count}}</p>
+          <p class="card-text"><b>Environment Variables: </b>{{deps.env_vars}}</p>
+        </div>
+        <div ng-repeat="deps in row.content">
+          <p class="card-text"><b>File: </b>{{deps.file}}</p>
+          <p class="card-text"><b>Dependencies: </b>{{deps.content}}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

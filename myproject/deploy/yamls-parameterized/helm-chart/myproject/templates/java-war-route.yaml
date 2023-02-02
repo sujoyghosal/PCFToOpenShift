@@ -1,0 +1,23 @@
+
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+    creationTimestamp: null
+    labels:
+        move2kube.konveyor.io/service: java-war
+    name: java-war
+spec:
+    host: https://c130-e.us-south.containers.cloud.ibm.com:30958
+    path: /java-war
+    port:
+        targetPort: port-9080
+    to:
+        kind: Service
+        name: java-war
+        weight: 1
+status:
+    ingress:
+        - {}
+
+...

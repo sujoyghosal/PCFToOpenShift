@@ -1,0 +1,19 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  creationTimestamp: null
+  labels:
+    move2kube.konveyor.io/service: python
+  name: python
+spec:
+  host: https://c130-e.us-south.containers.cloud.ibm.com:30958
+  path: /python
+  port:
+    targetPort: port-8080
+  to:
+    kind: Service
+    name: python
+    weight: 1
+status:
+  ingress:
+    - {}

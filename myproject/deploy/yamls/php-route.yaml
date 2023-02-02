@@ -1,0 +1,19 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  creationTimestamp: null
+  labels:
+    move2kube.konveyor.io/service: php
+  name: php
+spec:
+  host: https://c130-e.us-south.containers.cloud.ibm.com:30958
+  path: /php
+  port:
+    targetPort: port-8082
+  to:
+    kind: Service
+    name: php
+    weight: 1
+status:
+  ingress:
+    - {}

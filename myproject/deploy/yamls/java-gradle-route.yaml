@@ -1,0 +1,19 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  creationTimestamp: null
+  labels:
+    move2kube.konveyor.io/service: java-gradle
+  name: java-gradle
+spec:
+  host: https://c130-e.us-south.containers.cloud.ibm.com:30958
+  path: /java-gradle
+  port:
+    targetPort: port-9080
+  to:
+    kind: Service
+    name: java-gradle
+    weight: 1
+status:
+  ingress:
+    - {}

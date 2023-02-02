@@ -1,0 +1,23 @@
+
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+    creationTimestamp: null
+    labels:
+        move2kube.konveyor.io/service: rust
+    name: rust
+spec:
+    host: https://c130-e.us-south.containers.cloud.ibm.com:30958
+    path: /rust
+    port:
+        targetPort: port-8085
+    to:
+        kind: Service
+        name: rust
+        weight: 1
+status:
+    ingress:
+        - {}
+
+...

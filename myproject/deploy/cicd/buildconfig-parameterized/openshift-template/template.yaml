@@ -1,0 +1,419 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  name: myproject-template
+  generatename: ""
+  namespace: ""
+  selflink: ""
+  uid: ""
+  resourceversion: ""
+  generation: 0
+  creationtimestamp: "0001-01-01T00:00:00Z"
+  deletiontimestamp: null
+  deletiongraceperiodseconds: null
+  labels: {}
+  annotations: {}
+  ownerreferences: []
+  finalizers: []
+  clustername: ""
+  managedfields: []
+objects:
+  - apiVersion: build.openshift.io/v1
+    kind: BuildConfig
+    metadata:
+      creationTimestamp: null
+      name: myproject-clone-build-push-nodejs
+    spec:
+      nodeSelector: null
+      output:
+        to:
+          kind: ImageStreamTag
+          name: nodejs-latest:latest
+      postCommit: {}
+      resources: {}
+      source:
+        git:
+          ref: main
+          uri: ""
+        sourceSecret:
+          name: myproject-git-repo-generic
+        type: Git
+      strategy:
+        dockerStrategy:
+          dockerfilePath: '<TODO: insert path to the Dockerfile>'
+        type: Docker
+      triggers:
+        - generic:
+            secretReference:
+              name: myproject-web-hook-nodejs
+          type: Generic
+    status:
+      lastVersion: 0
+  - apiVersion: build.openshift.io/v1
+    kind: BuildConfig
+    metadata:
+      creationTimestamp: null
+      name: myproject-clone-build-push-php
+    spec:
+      nodeSelector: null
+      output:
+        to:
+          kind: ImageStreamTag
+          name: php-latest:latest
+      postCommit: {}
+      resources: {}
+      source:
+        git:
+          ref: main
+          uri: ""
+        sourceSecret:
+          name: myproject-git-repo-generic
+        type: Git
+      strategy:
+        dockerStrategy:
+          dockerfilePath: '<TODO: insert path to the Dockerfile>'
+        type: Docker
+      triggers:
+        - generic:
+            secretReference:
+              name: myproject-web-hook-php
+          type: Generic
+    status:
+      lastVersion: 0
+  - apiVersion: build.openshift.io/v1
+    kind: BuildConfig
+    metadata:
+      creationTimestamp: null
+      name: myproject-clone-build-push-ruby
+    spec:
+      nodeSelector: null
+      output:
+        to:
+          kind: ImageStreamTag
+          name: ruby-latest:latest
+      postCommit: {}
+      resources: {}
+      source:
+        git:
+          ref: main
+          uri: ""
+        sourceSecret:
+          name: myproject-git-repo-generic
+        type: Git
+      strategy:
+        dockerStrategy:
+          dockerfilePath: '<TODO: insert path to the Dockerfile>'
+        type: Docker
+      triggers:
+        - generic:
+            secretReference:
+              name: myproject-web-hook-ruby
+          type: Generic
+    status:
+      lastVersion: 0
+  - apiVersion: v1
+    data:
+      WebHookSecretKey: OTgxNTEwOTZlMjM1ZGM4Ng==
+    kind: Secret
+    metadata:
+      creationTimestamp: null
+      name: myproject-web-hook-django
+    type: Opaque
+  - apiVersion: v1
+    data:
+      WebHookSecretKey: M2IzNGUzNWE3N2YyODM4NQ==
+    kind: Secret
+    metadata:
+      creationTimestamp: null
+      name: myproject-web-hook-nodejs
+    type: Opaque
+  - apiVersion: v1
+    data:
+      WebHookSecretKey: N2UwMzAxMTcxY2VlODg5ZA==
+    kind: Secret
+    metadata:
+      creationTimestamp: null
+      name: myproject-web-hook-ruby
+    type: Opaque
+  - apiVersion: build.openshift.io/v1
+    kind: BuildConfig
+    metadata:
+      creationTimestamp: null
+      name: myproject-clone-build-push-golang
+    spec:
+      nodeSelector: null
+      output:
+        to:
+          kind: ImageStreamTag
+          name: golang-latest:latest
+      postCommit: {}
+      resources: {}
+      source:
+        git:
+          ref: main
+          uri: ""
+        sourceSecret:
+          name: myproject-git-repo-generic
+        type: Git
+      strategy:
+        dockerStrategy:
+          dockerfilePath: '<TODO: insert path to the Dockerfile>'
+        type: Docker
+      triggers:
+        - generic:
+            secretReference:
+              name: myproject-web-hook-golang
+          type: Generic
+    status:
+      lastVersion: 0
+  - apiVersion: build.openshift.io/v1
+    kind: BuildConfig
+    metadata:
+      creationTimestamp: null
+      name: myproject-clone-build-push-java-maven
+    spec:
+      nodeSelector: null
+      output:
+        to:
+          kind: ImageStreamTag
+          name: java-maven-latest:latest
+      postCommit: {}
+      resources: {}
+      source:
+        git:
+          ref: main
+          uri: ""
+        sourceSecret:
+          name: myproject-git-repo-generic
+        type: Git
+      strategy:
+        dockerStrategy:
+          dockerfilePath: '<TODO: insert path to the Dockerfile>'
+        type: Docker
+      triggers:
+        - generic:
+            secretReference:
+              name: myproject-web-hook-java-maven
+          type: Generic
+    status:
+      lastVersion: 0
+  - apiVersion: build.openshift.io/v1
+    kind: BuildConfig
+    metadata:
+      creationTimestamp: null
+      name: myproject-clone-build-push-rust
+    spec:
+      nodeSelector: null
+      output:
+        to:
+          kind: ImageStreamTag
+          name: rust-latest:latest
+      postCommit: {}
+      resources: {}
+      source:
+        git:
+          ref: main
+          uri: ""
+        sourceSecret:
+          name: myproject-git-repo-generic
+        type: Git
+      strategy:
+        dockerStrategy:
+          dockerfilePath: '<TODO: insert path to the Dockerfile>'
+        type: Docker
+      triggers:
+        - generic:
+            secretReference:
+              name: myproject-web-hook-rust
+          type: Generic
+    status:
+      lastVersion: 0
+  - apiVersion: v1
+    data:
+      WebHookSecretKey: ZWQ4ODlhNjAxNjRhZGJlNQ==
+    kind: Secret
+    metadata:
+      creationTimestamp: null
+      name: myproject-web-hook-golang
+    type: Opaque
+  - apiVersion: v1
+    data:
+      WebHookSecretKey: ZDYzM2JjZGJjNzA5Y2FjYQ==
+    kind: Secret
+    metadata:
+      creationTimestamp: null
+      name: myproject-web-hook-java-maven
+    type: Opaque
+  - apiVersion: v1
+    data:
+      WebHookSecretKey: ZjE3YzE3MjgwODQ1M2UyMw==
+    kind: Secret
+    metadata:
+      creationTimestamp: null
+      name: myproject-web-hook-java-war
+    type: Opaque
+  - apiVersion: build.openshift.io/v1
+    kind: BuildConfig
+    metadata:
+      creationTimestamp: null
+      name: myproject-clone-build-push-python
+    spec:
+      nodeSelector: null
+      output:
+        to:
+          kind: ImageStreamTag
+          name: python-latest:latest
+      postCommit: {}
+      resources: {}
+      source:
+        git:
+          ref: main
+          uri: ""
+        sourceSecret:
+          name: myproject-git-repo-generic
+        type: Git
+      strategy:
+        dockerStrategy:
+          dockerfilePath: '<TODO: insert path to the Dockerfile>'
+        type: Docker
+      triggers:
+        - generic:
+            secretReference:
+              name: myproject-web-hook-python
+          type: Generic
+    status:
+      lastVersion: 0
+  - apiVersion: v1
+    data:
+      ssh-privatekey: PFRPRE86IGluc2VydCB0aGUgcHJpdmF0ZSBzc2gga2V5IGZvciB5b3VyIGdpdCByZXBvPg==
+    kind: Secret
+    metadata:
+      creationTimestamp: null
+      name: myproject-git-repo-generic
+    type: kubernetes.io/ssh-auth
+  - apiVersion: v1
+    data:
+      WebHookSecretKey: NjU3MDRkZGUxYjNkYmEyZg==
+    kind: Secret
+    metadata:
+      creationTimestamp: null
+      name: myproject-web-hook-php
+    type: Opaque
+  - apiVersion: v1
+    data:
+      WebHookSecretKey: MDIxOGY2N2EyNWJmZWRhNA==
+    kind: Secret
+    metadata:
+      creationTimestamp: null
+      name: myproject-web-hook-python
+    type: Opaque
+  - apiVersion: build.openshift.io/v1
+    kind: BuildConfig
+    metadata:
+      creationTimestamp: null
+      name: myproject-clone-build-push-django
+    spec:
+      nodeSelector: null
+      output:
+        to:
+          kind: ImageStreamTag
+          name: django-latest:latest
+      postCommit: {}
+      resources: {}
+      source:
+        git:
+          ref: main
+          uri: ""
+        sourceSecret:
+          name: myproject-git-repo-generic
+        type: Git
+      strategy:
+        dockerStrategy:
+          dockerfilePath: '<TODO: insert path to the Dockerfile>'
+        type: Docker
+      triggers:
+        - generic:
+            secretReference:
+              name: myproject-web-hook-django
+          type: Generic
+    status:
+      lastVersion: 0
+  - apiVersion: build.openshift.io/v1
+    kind: BuildConfig
+    metadata:
+      creationTimestamp: null
+      name: myproject-clone-build-push-java-gradle
+    spec:
+      nodeSelector: null
+      output:
+        to:
+          kind: ImageStreamTag
+          name: java-gradle-latest:latest
+      postCommit: {}
+      resources: {}
+      source:
+        git:
+          ref: main
+          uri: ""
+        sourceSecret:
+          name: myproject-git-repo-generic
+        type: Git
+      strategy:
+        dockerStrategy:
+          dockerfilePath: '<TODO: insert path to the Dockerfile>'
+        type: Docker
+      triggers:
+        - generic:
+            secretReference:
+              name: myproject-web-hook-java-gradle
+          type: Generic
+    status:
+      lastVersion: 0
+  - apiVersion: build.openshift.io/v1
+    kind: BuildConfig
+    metadata:
+      creationTimestamp: null
+      name: myproject-clone-build-push-java-war
+    spec:
+      nodeSelector: null
+      output:
+        to:
+          kind: ImageStreamTag
+          name: java-war-latest:latest
+      postCommit: {}
+      resources: {}
+      source:
+        git:
+          ref: main
+          uri: ""
+        sourceSecret:
+          name: myproject-git-repo-generic
+        type: Git
+      strategy:
+        dockerStrategy:
+          dockerfilePath: '<TODO: insert path to the Dockerfile>'
+        type: Docker
+      triggers:
+        - generic:
+            secretReference:
+              name: myproject-web-hook-java-war
+          type: Generic
+    status:
+      lastVersion: 0
+  - apiVersion: v1
+    data:
+      WebHookSecretKey: MWQ2MDFmODg3Y2FkZTBkMg==
+    kind: Secret
+    metadata:
+      creationTimestamp: null
+      name: myproject-web-hook-java-gradle
+    type: Opaque
+  - apiVersion: v1
+    data:
+      WebHookSecretKey: YzVkNzM3MmEyMGQ5ZjdlNg==
+    kind: Secret
+    metadata:
+      creationTimestamp: null
+      name: myproject-web-hook-rust
+    type: Opaque
+parameters: []

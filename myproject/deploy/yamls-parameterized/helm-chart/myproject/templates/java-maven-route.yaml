@@ -1,0 +1,23 @@
+
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+    creationTimestamp: null
+    labels:
+        move2kube.konveyor.io/service: java-maven
+    name: java-maven
+spec:
+    host: https://c130-e.us-south.containers.cloud.ibm.com:30958
+    path: /java-maven
+    port:
+        targetPort: port-9080
+    to:
+        kind: Service
+        name: java-maven
+        weight: 1
+status:
+    ingress:
+        - {}
+
+...

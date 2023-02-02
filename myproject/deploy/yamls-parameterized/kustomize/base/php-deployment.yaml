@@ -1,0 +1,46 @@
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    creationTimestamp: null
+    labels:
+        move2kube.konveyor.io/service: php
+    name: php
+spec:
+    progressDeadlineSeconds: 600
+    replicas: 2
+    revisionHistoryLimit: 10
+    selector:
+        matchLabels:
+            move2kube.konveyor.io/service: php
+    strategy:
+        rollingUpdate:
+            maxSurge: 25%
+            maxUnavailable: 25%
+        type: RollingUpdate
+    template:
+        metadata:
+            creationTimestamp: null
+            labels:
+                move2kube.konveyor.io/service: php
+            name: php
+        spec:
+            containers:
+                - image: quay.io/test/php:latest
+                  imagePullPolicy: Always
+                  name: php
+                  ports:
+                    - containerPort: 8082
+                      protocol: TCP
+                  resources: {}
+                  terminationMessagePath: /dev/termination-log
+                  terminationMessagePolicy: File
+            dnsPolicy: ClusterFirst
+            restartPolicy: Always
+            schedulerName: default-scheduler
+            securityContext: {}
+            terminationGracePeriodSeconds: 30
+status: {}
+
+...

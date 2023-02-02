@@ -2,7 +2,7 @@
 <html ng-app="myApp">
 
 <head>
-  <title>Speech Translator</title>
+  <title>Discovery Dashboard</title>
   <script src="https://kit.fontawesome.com/72f4710995.js" crossorigin="anonymous"></script>
   <style>
     * {
@@ -38,48 +38,72 @@
       color: rgb(218, 18, 18);
     }
 
+    .card {
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+      transition: 0.3s;
+      width: auto;
+    }
+
+    .card:hover {
+      box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+    }
+
+    .container {
+      padding: 2px 16px;
+    }
+
+    .dot {
+      height: 400px;
+      width: 400px;
+      background-color: rgba(31, 10, 10, 0.034);
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    h1 {
+      font-size: 200px;
+      color: red;
+      height: 20px;
+    }
+
   </style>
 </head>
 
 <body ng-controller="ChatCtrl">
   <h2>Hi {{username}}</h2>
-  <div class="row">
-    <h2>Select Your Language</h2>
-    <select class="form-control" id="srcLang" name="srcLang" ng-model="srcLang">
-      <option value="" selected disabled>Select Source Language</option>
-      <option value="en-US">English</option>
-      <option value="bn-IN">Bengali</option>
-      <option value="hi-IN">Hindi</option>
-      <option value="th-TH">Thai</option>
-      <option value="fr-FR">French</option>
-      <option value="zh-CH">Chinese</option>
-      <option value="es">Spanish</option>
-      <option value="de">German</option>
-      <option value="ru">Russian</option>
-      <option value="gu">Gujrati</option>
-      <option value="it">Italian</option>
-      <option value="ja">Japanese</option>
-    </select>
-    <button type="button" class="btn btn-success btn-xl" ng-click="SetLang(srcLang); spinner=true;">Set Language</button>
-  </div>
   <hr>
   <br>
-  <div class="row">
-    <div class="column left">
-      <div ng-repeat="row in loggedinUsers" ng-value="row._id">
-        <button type="button" id="{{ID}}" class="btn btn-success btn-xl" ng-click="SpeechToText(srcLang, row)" ng-hide="row.email == login_email">{{row.name}}</button>
-      </div>
+  <button type="button" class="btn btn-info btn-xl" ng-click="DoTopLevelScan(); spinner=true;">Top Level Scan</button>
+  <h5>New Scan Data Received from Server!!</h5>
+  <div ng-show="showScanResults" class="card">
+    <div class="dot">
+      <h1>{{context_file_number}}</h1><br>
     </div>
-    <div class="column right">
-      <div class="overflow-auto" ng-repeat="row in chatArray">
-        <p align="left" id="{{row.id}}"> <b>{{row.user}}</b>{{': ' + row.text}}</p>
+    <div class="card text-white  bg-info mb-3" style="max-width: 50rem;">
+      <img ng-src="{{getIconForFileType(context_source_type) || '' }}" class="img-thumbnail" />
+      <div class="card-body">
+
+        <p class="card-text"><b>Email: </b>{{context_email}}</p>
+        <p class="card-text"><b>Time: </b>{{context_time}}</p>
+        <p class="card-text"><b>Scan Type: </b>{{context_type}}</p>
+        <p class="card-text"><b>File Type: </b>{{context_source_type}}</p>
+        <p class="card-text"><b>Dependencies Count: </b>{{context_deps_count}}</p>
+        <p class="card-text"><b>Environment Variables Count: </b>{{context_envvars_count}}</p>
+
+        <div ng-repeat="deps in row.dependencies">
+          <p class="card-text"><b>File: </b>{{deps.file}}</p>
+          <p class="card-text"><b>Dependencies: </b>{{deps.dependencies}}</p>
+          <p class="card-text"><b>Count of Dependencies: </b>{{deps.count_of_dependencies}}</p>
+          <p class="card-text"><b>Count of Env Vars: </b>{{deps.env_vars_count}}</p>
+          <p class="card-text"><b>Environment Variables: </b>{{deps.env_vars}}</p>
+        </div>
+        <div ng-repeat="deps in row.content">
+          <p class="card-text"><b>File: </b>{{deps.file}}</p>
+          <p class="card-text"><b>Dependencies: </b>{{deps.content}}</p>
+        </div>
       </div>
-      <!--<div class="row">
-        <button type="button" class="btn btn-success btn-xl" ng-click="SpeechToText(srcLang); spinner=true;">{{SpeakButtonLabel}}</button>
-      </div>-->
     </div>
   </div>
-
 </body>
 
 </html>
