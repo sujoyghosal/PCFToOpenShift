@@ -54,6 +54,16 @@ pushd source\golang
 %CONTAINER_RUNTIME% build -f Dockerfile -t golang .
 popd
 
+echo "building image java-gradle-buildstage"
+pushd source\java-gradle
+%CONTAINER_RUNTIME% build -f Dockerfile.buildstage -t java-gradle-buildstage .
+popd
+
+echo "building image java-maven-buildstage"
+pushd source\java-maven
+%CONTAINER_RUNTIME% build -f Dockerfile.buildstage -t java-maven-buildstage .
+popd
+
 echo "building image nodejs"
 pushd source\nodejs
 %CONTAINER_RUNTIME% build -f Dockerfile -t nodejs .

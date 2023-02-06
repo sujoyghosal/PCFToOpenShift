@@ -13,7 +13,7 @@ spec:
             creationTimestamp: null
         spec:
             containers:
-                - image: quay.io/test/golang:latest
+                - image: quay.io/myproject/golang:latest
                   imagePullPolicy: Always
                   name: golang
                   ports:

@@ -8,7 +8,7 @@ metadata:
         move2kube.konveyor.io/service: php
     name: php
 spec:
-    host: https://c130-e.us-south.containers.cloud.ibm.com:30958
+    host: myproject.com
     path: /php
     port:
         targetPort: port-8082

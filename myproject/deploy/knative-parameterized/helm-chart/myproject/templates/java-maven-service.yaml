@@ -13,7 +13,7 @@ spec:
             creationTimestamp: null
         spec:
             containers:
-                - image: quay.io/test/java-maven:latest
+                - image: quay.io/myproject/java-maven:latest
                   imagePullPolicy: Always
                   name: java-maven
                   ports:

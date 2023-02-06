@@ -1,22 +1,22 @@
 resources:
-  - myproject-clone-build-push-java-maven-buildconfig.yaml
-  - myproject-clone-build-push-rust-buildconfig.yaml
-  - myproject-web-hook-golang-secret.yaml
-  - myproject-web-hook-java-maven-secret.yaml
-  - myproject-web-hook-java-war-secret.yaml
-  - myproject-clone-build-push-golang-buildconfig.yaml
-  - myproject-git-repo-generic-secret.yaml
+  - myproject-web-hook-django-secret.yaml
+  - myproject-web-hook-java-gradle-secret.yaml
   - myproject-web-hook-php-secret.yaml
   - myproject-web-hook-python-secret.yaml
+  - myproject-clone-build-push-java-maven-buildconfig.yaml
   - myproject-clone-build-push-python-buildconfig.yaml
-  - myproject-clone-build-push-java-gradle-buildconfig.yaml
-  - myproject-clone-build-push-java-war-buildconfig.yaml
-  - myproject-web-hook-java-gradle-secret.yaml
-  - myproject-web-hook-rust-secret.yaml
-  - myproject-clone-build-push-django-buildconfig.yaml
-  - myproject-clone-build-push-php-buildconfig.yaml
   - myproject-clone-build-push-ruby-buildconfig.yaml
-  - myproject-web-hook-django-secret.yaml
+  - myproject-git-repo-generic-secret.yaml
+  - myproject-clone-build-push-php-buildconfig.yaml
   - myproject-web-hook-nodejs-secret.yaml
-  - myproject-web-hook-ruby-secret.yaml
+  - myproject-web-hook-rust-secret.yaml
+  - myproject-clone-build-push-java-war-buildconfig.yaml
   - myproject-clone-build-push-nodejs-buildconfig.yaml
+  - myproject-clone-build-push-rust-buildconfig.yaml
+  - myproject-web-hook-java-war-secret.yaml
+  - myproject-web-hook-java-maven-secret.yaml
+  - myproject-web-hook-ruby-secret.yaml
+  - myproject-clone-build-push-django-buildconfig.yaml
+  - myproject-clone-build-push-golang-buildconfig.yaml
+  - myproject-clone-build-push-java-gradle-buildconfig.yaml
+  - myproject-web-hook-golang-secret.yaml

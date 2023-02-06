@@ -13,7 +13,7 @@ spec:
             creationTimestamp: null
         spec:
             containers:
-                - image: quay.io/test/django:latest
+                - image: quay.io/myproject/django:latest
                   imagePullPolicy: Always
                   name: django
                   ports:

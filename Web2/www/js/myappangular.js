@@ -11,12 +11,13 @@ app.config([
   function ($routeProvider) {
     $routeProvider
       .when("/login", {
-        templateUrl: "Login.html",
+        templateUrl: "Chat2.html",
+        //templateUrl: "Login.html",
         controller: "ChatCtrl",
         isLogin: true,
       })
       .when("/home", {
-        templateUrl: "Chat.html",
+        templateUrl: "Chat2.html",
         controller: "ChatCtrl",
       })
       .when("/register", {
@@ -525,24 +526,7 @@ app.controller(
       });
       //var socket = io("http://localhost:5555");
       socket.on("event", (data) => {
-        Notification.info({
-          message: "New Chat Message Arrived", //JSON.stringify(data),
-          title: "New Event",
-          positionY: "top",
-          positionX: "center",
-          delay: 7000,
-        });
-        console.log("Event received from server : " + JSON.stringify(data));
-        $rootScope.chatArray.push({
-          user: data.sourceSpeaker.sourceUserName,
-          text: data.text,
-          id: "blue",
-        });
-        //$rootScope.myText =
-        //  data.sourceSpeaker.sourceUserName + ": " + JSON.stringify(data.text);
-        $rootScope.myText = JSON.stringify($rootScope.chatArray);
-        $scope.ID = "red";
-        $scope.Speak(data.lang, data.text);
+        console.log("Received server event named 'event'");
       });
       socket.on("new-scan", (data) => {
         $rootScope.showScanResults = true;
@@ -551,7 +535,8 @@ app.controller(
           title: "New Scan",
           positionY: "bottom",
           positionX: "center",
-          delay: 50,
+          delay: 50000,
+          replaceMessage: true,
         });
         console.log("Event received from server : " + JSON.stringify(data));
         $rootScope.myText = data.eventDetails.results;
@@ -560,12 +545,12 @@ app.controller(
         $rootScope.context_type = data.eventDetails.event_type;
         $rootScope.context_source_type = data.eventDetails.file_type;
         $rootScope.context_file_number = data.eventDetails.file_number;
-        $rootScope.context_deps_count = Number(
-          data.eventDetails.results.count_of_dependencies
-        );
-        $rootScope.context_envvars_count = Number(
-          data.eventDetails.results.env_vars_count
-        );
+        $rootScope.context_deps_count =
+          data.eventDetails.results.count_of_dependencies;
+        $rootScope.context_envvars_count =
+          data.eventDetails.results.env_vars_count;
+        $rootScope.context_vcap_envvars_count =
+          data.eventDetails.results.vcap_env_vars_count;
       });
 
       socket.on("disconnect", () => {

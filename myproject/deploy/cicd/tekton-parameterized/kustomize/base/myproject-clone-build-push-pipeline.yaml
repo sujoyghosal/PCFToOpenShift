@@ -27,7 +27,7 @@ spec:
         - name: build-push-1
           params:
             - name: IMAGE
-              value: $(params.image-registry-url)/java-war
+              value: $(params.image-registry-url)/python
             - name: DOCKERFILE
               value: '<TODO: insert path to the Dockerfile>'
             - name: CONTEXT
@@ -57,7 +57,7 @@ spec:
         - name: build-push-2
           params:
             - name: IMAGE
-              value: $(params.image-registry-url)/golang
+              value: $(params.image-registry-url)/php
             - name: DOCKERFILE
               value: '<TODO: insert path to the Dockerfile>'
             - name: CONTEXT
@@ -87,7 +87,7 @@ spec:
         - name: build-push-3
           params:
             - name: IMAGE
-              value: $(params.image-registry-url)/php
+              value: $(params.image-registry-url)/nodejs
             - name: DOCKERFILE
               value: '<TODO: insert path to the Dockerfile>'
             - name: CONTEXT
@@ -117,7 +117,7 @@ spec:
         - name: build-push-4
           params:
             - name: IMAGE
-              value: $(params.image-registry-url)/ruby
+              value: $(params.image-registry-url)/java-war
             - name: DOCKERFILE
               value: '<TODO: insert path to the Dockerfile>'
             - name: CONTEXT
@@ -147,7 +147,7 @@ spec:
         - name: build-push-5
           params:
             - name: IMAGE
-              value: $(params.image-registry-url)/nodejs
+              value: $(params.image-registry-url)/ruby
             - name: DOCKERFILE
               value: '<TODO: insert path to the Dockerfile>'
             - name: CONTEXT
@@ -177,7 +177,7 @@ spec:
         - name: build-push-6
           params:
             - name: IMAGE
-              value: $(params.image-registry-url)/django
+              value: $(params.image-registry-url)/golang
             - name: DOCKERFILE
               value: '<TODO: insert path to the Dockerfile>'
             - name: CONTEXT
@@ -207,7 +207,7 @@ spec:
         - name: build-push-7
           params:
             - name: IMAGE
-              value: $(params.image-registry-url)/java-maven
+              value: $(params.image-registry-url)/django
             - name: DOCKERFILE
               value: '<TODO: insert path to the Dockerfile>'
             - name: CONTEXT
@@ -237,7 +237,7 @@ spec:
         - name: build-push-8
           params:
             - name: IMAGE
-              value: $(params.image-registry-url)/java-gradle
+              value: $(params.image-registry-url)/java-maven
             - name: DOCKERFILE
               value: '<TODO: insert path to the Dockerfile>'
             - name: CONTEXT
@@ -267,7 +267,7 @@ spec:
         - name: build-push-9
           params:
             - name: IMAGE
-              value: $(params.image-registry-url)/rust
+              value: $(params.image-registry-url)/java-gradle
             - name: DOCKERFILE
               value: '<TODO: insert path to the Dockerfile>'
             - name: CONTEXT
@@ -297,7 +297,7 @@ spec:
         - name: build-push-10
           params:
             - name: IMAGE
-              value: $(params.image-registry-url)/python
+              value: $(params.image-registry-url)/rust
             - name: DOCKERFILE
               value: '<TODO: insert path to the Dockerfile>'
             - name: CONTEXT

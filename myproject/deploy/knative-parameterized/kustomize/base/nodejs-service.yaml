@@ -13,7 +13,7 @@ spec:
             creationTimestamp: null
         spec:
             containers:
-                - image: quay.io/test/nodejs:latest
+                - image: quay.io/myproject/nodejs:latest
                   imagePullPolicy: Always
                   name: nodejs
                   ports:

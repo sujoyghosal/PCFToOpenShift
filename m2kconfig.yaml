@@ -21,7 +21,7 @@ move2kube:
       childModules:
         java-gradle:
           port: "8080"
-      dockerfileType: no build stage
+      dockerfileType: build stage in base image
       enable: true
       wartransformer: Liberty
     java-maven:
@@ -31,7 +31,7 @@ move2kube:
       childModules:
         java-maven:
           port: "8080"
-      dockerfileType: no build stage
+      dockerfileType: build stage in base image
       enable: true
       wartransformer: Liberty
     java-war:
@@ -71,14 +71,11 @@ move2kube:
       port: "8085"
   target:
     default:
-      clustertype: IBM-Openshift
+      clustertype: Openshift
       ingress:
-        host: https://c130-e.us-south.containers.cloud.ibm.com:30958
+        host: myproject.com
     imageregistry:
-      https://c130-e.us-south.containers.cloud.ibm.com:30958:
-        logintype: username and password
-        username: sujoy.ghosal@gds.ey.com
-      namespace: test
+      namespace: myproject
       quay.io:
         logintype: no authentication
       url: quay.io

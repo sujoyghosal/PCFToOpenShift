@@ -9,6 +9,7 @@ phpfiles=
 phpfilescount=
 email=$1
 rm -rf scan_results
+rm -rf obj_final
 deps=
 echo "Welcome to the Discovery app for migration"
 echo "Enter folder path to scan"
@@ -20,6 +21,8 @@ deps_array="["
 yml_array="["
 pj_array="["
 i=0
+rm -rf /tmp/env_vars
+rm -rf /tmp/vcap_env_vars
 find $answer -name *.js|grep -v node_modules>/tmp/jsout
 if [ -s /tmp/jsout ] 
 then
@@ -32,12 +35,20 @@ then
 		c=`grep require\( $line|wc -l`
 		deps=`jo -p -a $e`
 		env_vars=`grep process.env. $line|sed 's/^.*process.env.//g'`
-		env_vars_count=`grep process.env. $line|wc -l`
+		grep process.env. $line|sed 's/^.*process.env.//g'|sed 's/[ |].*$//g'>>/tmp/env_vars
+		env_vars_count=`cat /tmp/env_vars|sort|uniq|wc -l`
 		env_vars=`jo -p -a "$env_vars"`
-		depsjson=`jo -p type=javascript file="$line" dependencies="$deps" count_of_dependencies="$c" env_vars="$env_vars" env_vars_count="$env_vars_count"`
+		#VCAP references
+		vcap_env_vars=`grep VCAP_ $line`
+		grep VCAP_ $line>>/tmp/vcap_env_vars
+		vcap_env_vars_count=`cat /tmp/vcap_env_vars|sort|uniq|wc -l`
+		vcap_env_vars=`jo -p -a "$vcap_env_vars"`
+
+		depsjson=`jo -p type=javascript file="$line" dependencies="$deps" count_of_dependencies="$c" env_vars="$env_vars" env_vars_count="$env_vars_count" vcap_env_vars="$vcap_env_vars" vcap_env_vars_count="$vcap_env_vars_count"`
 		#deps_array=`jo -p -a "$deps_array" "$depsjson"`
 		i=`expr $i + 1`
 		obj="{ \"email\": \"$email\", \"type\": \"javascript\", \"results\": $depsjson, \"file_number\": $i }"
+		echo $obj>>obj_final
 		curl --location --request POST 'http://localhost:5555/events/insert' \
 		--header 'Content-Type: application/json' \
 		--data-raw "$obj"

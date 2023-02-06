@@ -1,34 +1,21 @@
 {
-  "email": "joyitag@gmail.com",
-  "results": [{
-    "type": "javascript",
-    "files": [" API/accelerator_api.js API/z.js"],
-    "count": 2,
-    "dependencies": [{
+  "event_id": "63e089e1c200d9d129164d81",
+  "eventDetails": {
+    "email": "",
+    "time_created": "Mon Feb 06 2023 10:32:25 GMT+0530 (India Standard Time)",
+    "event_type": "top level scan",
+    "file_type": "javascript",
+    "file_number": 60,
+    "results": {
       "type": "javascript",
-      "file": "API/accelerator_api.js",
-      "dependencies": ["express", "mongodb", "child_process", "http", "fs", "cors", "body-parser", "mongodb", "bcrypt", "express", "querystring", "socket.io"],
-      "count_of_dependencies": 12,
-      "env_vars": ["PORT || 5555;"],
-      "env_vars_count": 1
-    }, {
-      "type": "javascript",
-      "file": "API/z.js",
-      "dependencies": ["express", "mongodb", "child_process", "http", "fs", "cors", "body-parser", "mongodb", "bcrypt", "express", "querystring", "socket.io"],
-      "count_of_dependencies": 12,
-      "env_vars": ["PORT || 5555;\nPORT || 7777;"],
-      "env_vars_count": 2
-    }],
-    "email": "joyitag@gmail.com"
-  }, {
-    "type": "YML",
-    "files": [" API/manifest.yml API/app.yml"],
-    "count": 2,
-    "dependencies": "[{\n \"type\": \"yml\",\n \"file\": \"API/manifest.yml\",\n \"content\": \"---\\napplications:\\n- name: cf-nodejs\\n memory: 512M\\n instances: 1\\n random-route: true\"\n},{\n \"type\": \"yml\",\n \"file\": \"API/app.yml\",\n \"content\": \"---\\napplications:\\n- name: cf-nodejs\\n memory: 512M\\n instances: 1\\n random-route: true\"\n},"
-  }, {
-    "type": "package.json",
-    "files": [" API/package.json"],
-    "count": 1,
-    "email": "joyitag@gmail.com"
-  }]
+      "file": "node-samples/project9537/node-sample-code9537.js",
+      "dependencies": ["http", "express", "mongodb", "fs", "cors", "body-parser"],
+      "count_of_dependencies": 6,
+      "env_vars": ["PORT || 9537;\nVCAP_URL26066 || 'https://somesvc26066.example.com/getData';\nDB_URL26066 || 'https://somedb26066.example.com/getData';\nVCAP_URL23000 || 'https://somesvc23000.example.com/getData';\nDB_URL23000 || 'https://somedb23000.example.com/getData';\nVCAP_URL17041 || 'https://somesvc17041.example.com/getData';\nDB_URL17041 || 'https://somedb17041.example.com/getData';"],
+      "env_vars_count": 361,
+      "vcap_env_vars": ["const EXT_SVCURL26066 = process.env.VCAP_URL26066 || 'https://somesvc26066.example.com/getData';\nconst EXT_SVCURL23000 = process.env.VCAP_URL23000 || 'https://somesvc23000.example.com/getData';\nconst EXT_SVCURL17041 = process.env.VCAP_URL17041 || 'https://somesvc17041.example.com/getData';"],
+      "vcap_env_vars_count": 180
+    },
+    "_id": "63e089e1c200d9d129164d81"
+  }
 }

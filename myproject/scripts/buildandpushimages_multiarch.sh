@@ -27,7 +27,7 @@ fi
 cd .. # go to the parent directory so that all the relative paths will be correct
 
 REGISTRY_URL=quay.io
-REGISTRY_NAMESPACE=test
+REGISTRY_NAMESPACE=myproject
 PLATFORMS="linux/amd64,linux/arm64,linux/s390x,linux/ppc64le"
 if [ "$#" -gt 1 ]; then
   REGISTRY_URL=$1
@@ -42,6 +42,16 @@ fi
 echo 'building and pushing image golang'
 cd source/golang
 docker buildx build --platform ${PLATFORMS} -f Dockerfile  --push --tag ${REGISTRY_URL}/${REGISTRY_NAMESPACE}/golang .
+cd -
+
+echo 'building and pushing image java-gradle-buildstage'
+cd source/java-gradle
+docker buildx build --platform ${PLATFORMS} -f Dockerfile.buildstage  --push --tag ${REGISTRY_URL}/${REGISTRY_NAMESPACE}/java-gradle-buildstage .
+cd -
+
+echo 'building and pushing image java-maven-buildstage'
+cd source/java-maven
+docker buildx build --platform ${PLATFORMS} -f Dockerfile.buildstage  --push --tag ${REGISTRY_URL}/${REGISTRY_NAMESPACE}/java-maven-buildstage .
 cd -
 
 echo 'building and pushing image nodejs'

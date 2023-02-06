@@ -27,7 +27,7 @@ spec:
             name: ruby
         spec:
             containers:
-                - image: quay.io/test/ruby:latest
+                - image: quay.io/myproject/ruby:latest
                   imagePullPolicy: Always
                   name: ruby
                   ports:

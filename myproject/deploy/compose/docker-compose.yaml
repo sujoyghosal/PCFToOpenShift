@@ -2,61 +2,61 @@ version: "3.5"
 services:
   django:
     container_name: django
-    image: quay.io/test/django:latest
+    image: quay.io/myproject/django:latest
     ports:
       - target: 8080
-        published: 8086
+        published: 8087
   golang:
     container_name: golang
-    image: quay.io/test/golang:latest
+    image: quay.io/myproject/golang:latest
     ports:
       - target: 8080
-        published: 8088
+        published: 8089
   java-gradle:
     container_name: java-gradle
-    image: quay.io/test/java-gradle:latest
+    image: quay.io/myproject/java-gradle:latest
     ports:
       - target: 9080
         published: 8081
   java-maven:
     container_name: java-maven
-    image: quay.io/test/java-maven:latest
+    image: quay.io/myproject/java-maven:latest
     ports:
       - target: 9080
-        published: 8082
+        published: 8084
   java-war:
     container_name: java-war
-    image: quay.io/test/java-war:latest
+    image: quay.io/myproject/java-war:latest
     ports:
       - target: 9080
-        published: 8087
+        published: 8080
   nodejs:
     container_name: nodejs
-    image: quay.io/test/nodejs:latest
+    image: quay.io/myproject/nodejs:latest
     ports:
       - target: 8080
-        published: 8089
+        published: 8086
   php:
     container_name: php
-    image: quay.io/test/php:latest
+    image: quay.io/myproject/php:latest
     ports:
       - target: 8082
-        published: 8083
+        published: 8082
   python:
     container_name: python
-    image: quay.io/test/python:latest
+    image: quay.io/myproject/python:latest
     ports:
       - target: 8080
-        published: 8084
+        published: 8083
   ruby:
     container_name: ruby
-    image: quay.io/test/ruby:latest
+    image: quay.io/myproject/ruby:latest
     ports:
       - target: 8080
-        published: 8080
+        published: 8088
   rust:
     container_name: rust
-    image: quay.io/test/rust:latest
+    image: quay.io/myproject/rust:latest
     ports:
       - target: 8085
         published: 8085

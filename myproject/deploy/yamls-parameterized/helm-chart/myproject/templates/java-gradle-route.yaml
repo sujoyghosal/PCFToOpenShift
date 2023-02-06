@@ -8,7 +8,7 @@ metadata:
         move2kube.konveyor.io/service: java-gradle
     name: java-gradle
 spec:
-    host: https://c130-e.us-south.containers.cloud.ibm.com:30958
+    host: myproject.com
     path: /java-gradle
     port:
         targetPort: port-9080

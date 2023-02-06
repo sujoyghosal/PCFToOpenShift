@@ -37,6 +37,16 @@ cd source/golang
 ${CONTAINER_RUNTIME} build -f Dockerfile -t golang .
 cd -
 
+echo 'building image java-gradle-buildstage'
+cd source/java-gradle
+${CONTAINER_RUNTIME} build -f Dockerfile.buildstage -t java-gradle-buildstage .
+cd -
+
+echo 'building image java-maven-buildstage'
+cd source/java-maven
+${CONTAINER_RUNTIME} build -f Dockerfile.buildstage -t java-maven-buildstage .
+cd -
+
 echo 'building image nodejs'
 cd source/nodejs
 ${CONTAINER_RUNTIME} build -f Dockerfile -t nodejs .

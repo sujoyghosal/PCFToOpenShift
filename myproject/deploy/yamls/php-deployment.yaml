@@ -25,7 +25,7 @@ spec:
       name: php
     spec:
       containers:
-        - image: quay.io/test/php:latest
+        - image: quay.io/myproject/php:latest
           imagePullPolicy: Always
           name: php
           ports:

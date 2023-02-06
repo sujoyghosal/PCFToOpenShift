@@ -8,6 +8,8 @@ rbfilescount=
 phpfiles=
 phpfilescount=
 email=$1
+rm -rf scan_results
+rm -rf obj_final
 deps=
 echo "Welcome to the Discovery app for migration"
 echo "Enter folder path to scan"
@@ -18,6 +20,8 @@ scan_array="["
 deps_array="["
 yml_array="["
 pj_array="["
+i=0
+rm -rf /tmp/env_vars
 find $answer -name *.js|grep -v node_modules>/tmp/jsout
 if [ -s /tmp/jsout ] 
 then
@@ -30,10 +34,18 @@ then
 		c=`grep require\( $line|wc -l`
 		deps=`jo -p -a $e`
 		env_vars=`grep process.env. $line|sed 's/^.*process.env.//g'`
-		env_vars_count=`grep process.env. $line|wc -l`
+		grep process.env. $line|sed 's/^.*process.env.//g'|sed 's/[ |].*$//g'>>/tmp/env_vars
+		env_vars_count=`cat /tmp/env_vars|sort|uniq|wc -l`
+		#env_vars_count=`grep process.env. $line|wc -l`
 		env_vars=`jo -p -a "$env_vars"`
 		depsjson=`jo -p type=javascript file="$line" dependencies="$deps" count_of_dependencies="$c" env_vars="$env_vars" env_vars_count="$env_vars_count"`
 		#deps_array=`jo -p -a "$deps_array" "$depsjson"`
+		i=`expr $i + 1`
+		obj="{ \"email\": \"$email\", \"type\": \"javascript\", \"results\": $depsjson, \"file_number\": $i }"
+		echo $obj>>obj_final
+		curl --location --request POST 'http://localhost:5555/events/insert' \
+		--header 'Content-Type: application/json' \
+		--data-raw "$obj"
 		deps_array=$deps_array$depsjson","
 	done</tmp/jsout
 	deps_array=`echo $deps_array|sed 's/,$//g'`"]"
@@ -44,10 +56,6 @@ then
 	#jsjson=`jo -p type=javascript files="$jsfiles" count=$jsfilescount dependencies="$deps_array" email=$email`
 	jsjson=`jo -p type=javascript  files_count=$jsfilescount dependencies="$deps_array" email=$email`
 	scan_array=$scan_array$jsjson
-	echo "Sending JS details to server"
-#	curl --location --request POST 'http://localhost:5555/events/insert' \
-#	--header 'Content-Type: application/json' \
-#	--data-raw "$jsjson"
 	echo ":)"
 fi
 echo "Checking package.json files..."
@@ -63,17 +71,16 @@ then
 		c=`awk '/dependencies/{ f = 1; next } /}/{ f = 0 } f' $line`
 		pjobj=`jo -p type=package.json file="$line" content="$c"`
 		pj_array=$pj_array$pjobj","
+		curl --location --request POST 'http://localhost:5555/events/insert' \
+		--header 'Content-Type: application/json' \
+		--data-raw "$pjobj"
 	done</tmp/pjout
 	pj_array=`echo $pj_array|sed 's/,$//g'`"]"
 	pjfilescount=`wc -l /tmp/pjout|awk '{print $1}'`
 	echo "Found $pjfilescount package.json files"
 	pjfiles=`jo -p -a "$pjfiles"`
-	pjjson=`jo -p type=package.json files="$pjfiles" count=$pjfilescount content="$pj_array"`
-	scan_array=$scan_array","$pjjson
-	echo "Sending package.json details to server"
-#	curl --location --request POST 'http://localhost:5555/events/insert' \
-#	--header 'Content-Type: application/json' \
-#	--data-raw "$pjjson"
+	#pjjson=`jo -p type=package.json files="$pjfiles" count=$pjfilescount content="$pj_array"`
+	pjjson=`jo -p type=package.json  count=$pjfilescount content="$pj_array"`
 	echo ":)"
 fi
 echo "Checking for config yml files..."
@@ -239,7 +246,7 @@ fi
 scan_array=$scan_array"]"
 #echo $scan_array
 obj="{ \"email\": \"$email\", \"results\": $scan_array }"
-echo $obj|tee scan_results.json
-curl --location --request POST 'http://localhost:5555/events/insert' \
-	--header 'Content-Type: application/json' \
-	--data-raw "$obj"
+#echo $obj|tee scan_results.json
+#curl --location --request POST 'http://localhost:5555/events/insert' \
+#	--header 'Content-Type: application/json' \
+#	--data-raw "$obj"

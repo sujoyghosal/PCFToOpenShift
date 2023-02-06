@@ -12,19 +12,20 @@ do
 	#rand=$((low + RANDOM%(1+high-low)))
 	rand=$((5000 + $RANDOM ))
 	mkdir "node-samples/project$rand"
-	echo "const http = require(\"http\");">node-samples/project$rand/node-sample-code$rand.js
-	echo "const http = require(\"express\");">>node-samples/project$rand/node-sample-code$rand.js
-	echo "const http = require(\"mongodb\");">>node-samples/project$rand/node-sample-code$rand.js
-	echo "const http = require(\"fs\");">>node-samples/project$rand/node-sample-code$rand.js
-	echo "const http = require(\"cors\");">>node-samples/project$rand/node-sample-code$rand.js
-	echo "const http = require(\"body-parser\");">>node-samples/project$rand/node-sample-code$rand.js
-	echo "const PORT = process.env.PORT || $rand;">>node-samples/project$rand/node-sample-code$rand.js
-	while [ $j -lt 9 ]
+		echo "const http = require(\"http\");">node-samples/project$rand/node-sample-code$rand.js
+		echo "const http = require(\"express\");">>node-samples/project$rand/node-sample-code$rand.js
+		echo "const http = require(\"mongodb\");">>node-samples/project$rand/node-sample-code$rand.js
+		echo "const http = require(\"fs\");">>node-samples/project$rand/node-sample-code$rand.js
+		echo "const http = require(\"cors\");">>node-samples/project$rand/node-sample-code$rand.js
+		echo "const http = require(\"body-parser\");">>node-samples/project$rand/node-sample-code$rand.js
+		echo "const PORT = process.env.PORT || $rand;">>node-samples/project$rand/node-sample-code$rand.js
+	while [ $j -lt 3 ]
 	do
 		#a=$((low + RANDOM%(1+high-low)))
 		a=$((2000 + $RANDOM ))
-		echo "Here $i,$j"
-		echo "const EXT_SVCURL$a = process.env.VCAP_URL$a || 'https://somesv$a.example.com/getData';">>node-samples/project$rand/node-sample-code$rand.js
+		echo "Project $i created"
+		echo "const EXT_SVCURL$a = process.env.VCAP_URL$a || 'https://somesvc$a.example.com/getData';">>node-samples/project$rand/node-sample-code$rand.js
+		echo "const DB_URL$a = process.env.DB_URL$a || 'https://somedb$a.example.com/getData';">>node-samples/project$rand/node-sample-code$rand.js
 		j=`expr $j + 1`
 	done
 	j=0

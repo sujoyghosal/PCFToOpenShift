@@ -1,41 +1,41 @@
 resources:
-  - java-gradle-service.yaml
-  - nodejs-latest-imagestream.yaml
-  - php-latest-imagestream.yaml
-  - php-route.yaml
+  - golang-latest-imagestream.yaml
   - php-service.yaml
-  - rust-deployment.yaml
-  - golang-route.yaml
-  - nodejs-route.yaml
-  - python-route.yaml
-  - python-service.yaml
   - ruby-latest-imagestream.yaml
-  - java-war-latest-imagestream.yaml
-  - java-war-service.yaml
-  - django-route.yaml
-  - django-service.yaml
-  - golang-deployment.yaml
-  - java-gradle-deployment.yaml
-  - java-maven-route.yaml
   - ruby-service.yaml
   - rust-latest-imagestream.yaml
-  - rust-route.yaml
-  - django-deployment.yaml
+  - django-latest-imagestream.yaml
+  - django-route.yaml
   - java-war-deployment.yaml
-  - java-war-route.yaml
-  - python-latest-imagestream.yaml
-  - ruby-route.yaml
-  - rust-service.yaml
+  - java-war-service.yaml
+  - java-maven-latest-imagestream.yaml
+  - php-latest-imagestream.yaml
+  - ruby-deployment.yaml
+  - java-maven-deployment.yaml
+  - java-maven-service.yaml
   - nodejs-deployment.yaml
-  - golang-latest-imagestream.yaml
+  - nodejs-latest-imagestream.yaml
+  - python-latest-imagestream.yaml
+  - django-service.yaml
+  - golang-route.yaml
+  - golang-service.yaml
+  - java-war-latest-imagestream.yaml
+  - nodejs-route.yaml
+  - nodejs-service.yaml
+  - php-route.yaml
+  - rust-service.yaml
+  - java-maven-route.yaml
+  - php-deployment.yaml
+  - rust-route.yaml
+  - java-gradle-deployment.yaml
+  - java-gradle-service.yaml
+  - java-war-route.yaml
+  - python-route.yaml
+  - ruby-route.yaml
+  - django-deployment.yaml
+  - golang-deployment.yaml
   - java-gradle-latest-imagestream.yaml
   - java-gradle-route.yaml
-  - java-maven-deployment.yaml
-  - java-maven-latest-imagestream.yaml
-  - django-latest-imagestream.yaml
-  - golang-service.yaml
-  - php-deployment.yaml
   - python-deployment.yaml
-  - java-maven-service.yaml
-  - nodejs-service.yaml
-  - ruby-deployment.yaml
+  - python-service.yaml
+  - rust-deployment.yaml

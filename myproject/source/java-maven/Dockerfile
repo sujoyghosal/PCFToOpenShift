@@ -22,6 +22,6 @@ ENV PORT 8080
 RUN wget https://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/wasdev/downloads/wlp/21.0.0.12/wlp-jakartaee9-21.0.0.12.zip && \
     unzip wlp-jakartaee9-21.0.0.12.zip && \
     rm wlp-jakartaee9-21.0.0.12.zip
-COPY target/java-maven.war wlp/usr/servers/defaultServer/dropins/
+COPY --from=java-maven-buildstage /app/target/java-maven.war wlp/usr/servers/defaultServer/dropins/
 EXPOSE 9080
 CMD ["wlp/bin/server", "run"]

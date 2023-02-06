@@ -11,7 +11,7 @@ spec:
       creationTimestamp: null
     spec:
       containers:
-        - image: quay.io/test/java-war:latest
+        - image: quay.io/myproject/java-war:latest
           imagePullPolicy: Always
           name: java-war
           ports:

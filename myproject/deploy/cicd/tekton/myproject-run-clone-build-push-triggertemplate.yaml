@@ -13,7 +13,7 @@ spec:
       spec:
         params:
           - name: image-registry-url
-            value: quay.io/test
+            value: quay.io/myproject
         pipelineRef:
           name: myproject-clone-build-push
         serviceAccountName: myproject-clone-push

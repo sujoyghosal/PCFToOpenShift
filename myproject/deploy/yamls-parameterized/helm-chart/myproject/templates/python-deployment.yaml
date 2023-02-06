@@ -27,7 +27,7 @@ spec:
             name: python
         spec:
             containers:
-                - image: quay.io/test/python:latest
+                - image: quay.io/myproject/python:latest
                   imagePullPolicy: Always
                   name: python
                   ports:

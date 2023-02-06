@@ -370,7 +370,8 @@ function createEvent(obj, req, res) {
     } else {
       console.log(`Added a new event with id ${result.insertedId}`);
       console.log("Sending event to subscribers of channel " + channel);
-      io.sockets.in(channel).emit("new-scan", {
+      //io.sockets.in(channel).emit("new-scan", {
+      io.local.emit("new-scan", {
         event_id: result.insertedId,
         eventDetails: obj,
       });

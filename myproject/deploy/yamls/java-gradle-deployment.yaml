@@ -25,7 +25,7 @@ spec:
       name: java-gradle
     spec:
       containers:
-        - image: quay.io/test/java-gradle:latest
+        - image: quay.io/myproject/java-gradle:latest
           imagePullPolicy: Always
           name: java-gradle
           ports:

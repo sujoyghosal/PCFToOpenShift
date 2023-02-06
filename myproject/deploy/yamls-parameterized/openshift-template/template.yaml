@@ -18,48 +18,67 @@ metadata:
   clustername: ""
   managedfields: []
 objects:
-  - apiVersion: apps/v1
-    kind: Deployment
+  - apiVersion: route.openshift.io/v1
+    kind: Route
     metadata:
       creationTimestamp: null
       labels:
-        move2kube.konveyor.io/service: rust
-      name: rust
+        move2kube.konveyor.io/service: php
+      name: php
     spec:
-      progressDeadlineSeconds: 600
-      replicas: ${{COMMON_REPLICAS}}
-      revisionHistoryLimit: 10
+      host: myproject.com
+      path: /php
+      port:
+        targetPort: port-8082
+      to:
+        kind: Service
+        name: php
+        weight: 1
+    status:
+      ingress:
+        - {}
+  - apiVersion: image.openshift.io/v1
+    kind: ImageStream
+    metadata:
+      creationTimestamp: null
+      labels:
+        move2kube.konveyor.io/service: python-latest
+      name: python-latest
+    spec:
+      lookupPolicy:
+        local: false
+      tags:
+        - annotations: null
+          from:
+            kind: DockerImage
+            name: python
+          generation: null
+          importPolicy: {}
+          name: latest
+          referencePolicy:
+            type: ""
+    status:
+      dockerImageRepository: ""
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      creationTimestamp: null
+      labels:
+        move2kube.konveyor.io/service: django
+      name: django
+    spec:
+      internalTrafficPolicy: Cluster
+      ports:
+        - name: port-8080
+          port: 8080
+          protocol: TCP
+          targetPort: 8080
       selector:
-        matchLabels:
-          move2kube.konveyor.io/service: rust
-      strategy:
-        rollingUpdate:
-          maxSurge: 25%
-          maxUnavailable: 25%
-        type: RollingUpdate
-      template:
-        metadata:
-          creationTimestamp: null
-          labels:
-            move2kube.konveyor.io/service: rust
-          name: rust
-        spec:
-          containers:
-            - image: quay.io/test/rust:latest
-              imagePullPolicy: Always
-              name: rust
-              ports:
-                - containerPort: 8085
-                  protocol: TCP
-              resources: {}
-              terminationMessagePath: /dev/termination-log
-              terminationMessagePolicy: File
-          dnsPolicy: ClusterFirst
-          restartPolicy: Always
-          schedulerName: default-scheduler
-          securityContext: {}
-          terminationGracePeriodSeconds: 30
-    status: {}
+        move2kube.konveyor.io/service: django
+      sessionAffinity: None
+      type: ClusterIP
+    status:
+      loadBalancer: {}
   - apiVersion: route.openshift.io/v1
     kind: Route
     metadata:
@@ -68,7 +87,7 @@ objects:
         move2kube.konveyor.io/service: golang
       name: golang
     spec:
-      host: https://c130-e.us-south.containers.cloud.ibm.com:30958
+      host: myproject.com
       path: /golang
       port:
         targetPort: port-8080
@@ -79,51 +98,13 @@ objects:
     status:
       ingress:
         - {}
-  - apiVersion: route.openshift.io/v1
-    kind: Route
-    metadata:
-      creationTimestamp: null
-      labels:
-        move2kube.konveyor.io/service: nodejs
-      name: nodejs
-    spec:
-      host: https://c130-e.us-south.containers.cloud.ibm.com:30958
-      path: /nodejs
-      port:
-        targetPort: port-8080
-      to:
-        kind: Service
-        name: nodejs
-        weight: 1
-    status:
-      ingress:
-        - {}
-  - apiVersion: route.openshift.io/v1
-    kind: Route
-    metadata:
-      creationTimestamp: null
-      labels:
-        move2kube.konveyor.io/service: python
-      name: python
-    spec:
-      host: https://c130-e.us-south.containers.cloud.ibm.com:30958
-      path: /python
-      port:
-        targetPort: port-8080
-      to:
-        kind: Service
-        name: python
-        weight: 1
-    status:
-      ingress:
-        - {}
   - apiVersion: v1
     kind: Service
     metadata:
       creationTimestamp: null
       labels:
-        move2kube.konveyor.io/service: python
-      name: python
+        move2kube.konveyor.io/service: golang
+      name: golang
     spec:
       internalTrafficPolicy: Cluster
       ports:
@@ -132,33 +113,11 @@ objects:
           protocol: TCP
           targetPort: 8080
       selector:
-        move2kube.konveyor.io/service: python
+        move2kube.konveyor.io/service: golang
       sessionAffinity: None
       type: ClusterIP
     status:
       loadBalancer: {}
-  - apiVersion: image.openshift.io/v1
-    kind: ImageStream
-    metadata:
-      creationTimestamp: null
-      labels:
-        move2kube.konveyor.io/service: ruby-latest
-      name: ruby-latest
-    spec:
-      lookupPolicy:
-        local: false
-      tags:
-        - annotations: null
-          from:
-            kind: DockerImage
-            name: ruby
-          generation: null
-          importPolicy: {}
-          name: latest
-          referencePolicy:
-            type: ""
-    status:
-      dockerImageRepository: ""
   - apiVersion: image.openshift.io/v1
     kind: ImageStream
     metadata:
@@ -181,41 +140,21 @@ objects:
             type: ""
     status:
       dockerImageRepository: ""
-  - apiVersion: v1
-    kind: Service
-    metadata:
-      creationTimestamp: null
-      labels:
-        move2kube.konveyor.io/service: java-war
-      name: java-war
-    spec:
-      internalTrafficPolicy: Cluster
-      ports:
-        - name: port-9080
-          port: 9080
-          protocol: TCP
-          targetPort: 9080
-      selector:
-        move2kube.konveyor.io/service: java-war
-      sessionAffinity: None
-      type: ClusterIP
-    status:
-      loadBalancer: {}
   - apiVersion: route.openshift.io/v1
     kind: Route
     metadata:
       creationTimestamp: null
       labels:
-        move2kube.konveyor.io/service: django
-      name: django
+        move2kube.konveyor.io/service: nodejs
+      name: nodejs
     spec:
-      host: https://c130-e.us-south.containers.cloud.ibm.com:30958
-      path: /django
+      host: myproject.com
+      path: /nodejs
       port:
         targetPort: port-8080
       to:
         kind: Service
-        name: django
+        name: nodejs
         weight: 1
     status:
       ingress:
@@ -225,8 +164,8 @@ objects:
     metadata:
       creationTimestamp: null
       labels:
-        move2kube.konveyor.io/service: django
-      name: django
+        move2kube.konveyor.io/service: nodejs
+      name: nodejs
     spec:
       internalTrafficPolicy: Cluster
       ports:
@@ -235,25 +174,64 @@ objects:
           protocol: TCP
           targetPort: 8080
       selector:
-        move2kube.konveyor.io/service: django
+        move2kube.konveyor.io/service: nodejs
       sessionAffinity: None
       type: ClusterIP
     status:
       loadBalancer: {}
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      creationTimestamp: null
+      labels:
+        move2kube.konveyor.io/service: rust
+      name: rust
+    spec:
+      internalTrafficPolicy: Cluster
+      ports:
+        - name: port-8085
+          port: 8085
+          protocol: TCP
+          targetPort: 8085
+      selector:
+        move2kube.konveyor.io/service: rust
+      sessionAffinity: None
+      type: ClusterIP
+    status:
+      loadBalancer: {}
+  - apiVersion: route.openshift.io/v1
+    kind: Route
+    metadata:
+      creationTimestamp: null
+      labels:
+        move2kube.konveyor.io/service: java-maven
+      name: java-maven
+    spec:
+      host: myproject.com
+      path: /java-maven
+      port:
+        targetPort: port-9080
+      to:
+        kind: Service
+        name: java-maven
+        weight: 1
+    status:
+      ingress:
+        - {}
   - apiVersion: apps/v1
     kind: Deployment
     metadata:
       creationTimestamp: null
       labels:
-        move2kube.konveyor.io/service: golang
-      name: golang
+        move2kube.konveyor.io/service: php
+      name: php
     spec:
       progressDeadlineSeconds: 600
       replicas: ${{COMMON_REPLICAS}}
       revisionHistoryLimit: 10
       selector:
         matchLabels:
-          move2kube.konveyor.io/service: golang
+          move2kube.konveyor.io/service: php
       strategy:
         rollingUpdate:
           maxSurge: 25%
@@ -263,15 +241,15 @@ objects:
         metadata:
           creationTimestamp: null
           labels:
-            move2kube.konveyor.io/service: golang
-          name: golang
+            move2kube.konveyor.io/service: php
+          name: php
         spec:
           containers:
-            - image: quay.io/test/golang:latest
+            - image: quay.io/myproject/php:latest
               imagePullPolicy: Always
-              name: golang
+              name: php
               ports:
-                - containerPort: 8080
+                - containerPort: 8082
                   protocol: TCP
               resources: {}
               terminationMessagePath: /dev/termination-log
@@ -282,6 +260,25 @@ objects:
           securityContext: {}
           terminationGracePeriodSeconds: 30
     status: {}
+  - apiVersion: route.openshift.io/v1
+    kind: Route
+    metadata:
+      creationTimestamp: null
+      labels:
+        move2kube.konveyor.io/service: rust
+      name: rust
+    spec:
+      host: myproject.com
+      path: /rust
+      port:
+        targetPort: port-8085
+      to:
+        kind: Service
+        name: rust
+        weight: 1
+    status:
+      ingress:
+        - {}
   - apiVersion: apps/v1
     kind: Deployment
     metadata:
@@ -309,7 +306,7 @@ objects:
           name: java-gradle
         spec:
           containers:
-            - image: quay.io/test/java-gradle:latest
+            - image: quay.io/myproject/java-gradle:latest
               imagePullPolicy: Always
               name: java-gradle
               ports:
@@ -324,25 +321,376 @@ objects:
           securityContext: {}
           terminationGracePeriodSeconds: 30
     status: {}
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      creationTimestamp: null
+      labels:
+        move2kube.konveyor.io/service: java-gradle
+      name: java-gradle
+    spec:
+      internalTrafficPolicy: Cluster
+      ports:
+        - name: port-9080
+          port: 9080
+          protocol: TCP
+          targetPort: 9080
+      selector:
+        move2kube.konveyor.io/service: java-gradle
+      sessionAffinity: None
+      type: ClusterIP
+    status:
+      loadBalancer: {}
   - apiVersion: route.openshift.io/v1
     kind: Route
     metadata:
       creationTimestamp: null
       labels:
-        move2kube.konveyor.io/service: java-maven
-      name: java-maven
+        move2kube.konveyor.io/service: java-war
+      name: java-war
     spec:
-      host: https://c130-e.us-south.containers.cloud.ibm.com:30958
-      path: /java-maven
+      host: myproject.com
+      path: /java-war
       port:
         targetPort: port-9080
       to:
         kind: Service
-        name: java-maven
+        name: java-war
         weight: 1
     status:
       ingress:
         - {}
+  - apiVersion: route.openshift.io/v1
+    kind: Route
+    metadata:
+      creationTimestamp: null
+      labels:
+        move2kube.konveyor.io/service: python
+      name: python
+    spec:
+      host: myproject.com
+      path: /python
+      port:
+        targetPort: port-8080
+      to:
+        kind: Service
+        name: python
+        weight: 1
+    status:
+      ingress:
+        - {}
+  - apiVersion: route.openshift.io/v1
+    kind: Route
+    metadata:
+      creationTimestamp: null
+      labels:
+        move2kube.konveyor.io/service: ruby
+      name: ruby
+    spec:
+      host: myproject.com
+      path: /ruby
+      port:
+        targetPort: port-8080
+      to:
+        kind: Service
+        name: ruby
+        weight: 1
+    status:
+      ingress:
+        - {}
+  - apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      creationTimestamp: null
+      labels:
+        move2kube.konveyor.io/service: rust
+      name: rust
+    spec:
+      progressDeadlineSeconds: 600
+      replicas: ${{COMMON_REPLICAS}}
+      revisionHistoryLimit: 10
+      selector:
+        matchLabels:
+          move2kube.konveyor.io/service: rust
+      strategy:
+        rollingUpdate:
+          maxSurge: 25%
+          maxUnavailable: 25%
+        type: RollingUpdate
+      template:
+        metadata:
+          creationTimestamp: null
+          labels:
+            move2kube.konveyor.io/service: rust
+          name: rust
+        spec:
+          containers:
+            - image: quay.io/myproject/rust:latest
+              imagePullPolicy: Always
+              name: rust
+              ports:
+                - containerPort: 8085
+                  protocol: TCP
+              resources: {}
+              terminationMessagePath: /dev/termination-log
+              terminationMessagePolicy: File
+          dnsPolicy: ClusterFirst
+          restartPolicy: Always
+          schedulerName: default-scheduler
+          securityContext: {}
+          terminationGracePeriodSeconds: 30
+    status: {}
+  - apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      creationTimestamp: null
+      labels:
+        move2kube.konveyor.io/service: django
+      name: django
+    spec:
+      progressDeadlineSeconds: 600
+      replicas: ${{COMMON_REPLICAS}}
+      revisionHistoryLimit: 10
+      selector:
+        matchLabels:
+          move2kube.konveyor.io/service: django
+      strategy:
+        rollingUpdate:
+          maxSurge: 25%
+          maxUnavailable: 25%
+        type: RollingUpdate
+      template:
+        metadata:
+          creationTimestamp: null
+          labels:
+            move2kube.konveyor.io/service: django
+          name: django
+        spec:
+          containers:
+            - image: quay.io/myproject/django:latest
+              imagePullPolicy: Always
+              name: django
+              ports:
+                - containerPort: 8080
+                  protocol: TCP
+              resources: {}
+              terminationMessagePath: /dev/termination-log
+              terminationMessagePolicy: File
+          dnsPolicy: ClusterFirst
+          restartPolicy: Always
+          schedulerName: default-scheduler
+          securityContext: {}
+          terminationGracePeriodSeconds: 30
+    status: {}
+  - apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      creationTimestamp: null
+      labels:
+        move2kube.konveyor.io/service: golang
+      name: golang
+    spec:
+      progressDeadlineSeconds: 600
+      replicas: ${{COMMON_REPLICAS}}
+      revisionHistoryLimit: 10
+      selector:
+        matchLabels:
+          move2kube.konveyor.io/service: golang
+      strategy:
+        rollingUpdate:
+          maxSurge: 25%
+          maxUnavailable: 25%
+        type: RollingUpdate
+      template:
+        metadata:
+          creationTimestamp: null
+          labels:
+            move2kube.konveyor.io/service: golang
+          name: golang
+        spec:
+          containers:
+            - image: quay.io/myproject/golang:latest
+              imagePullPolicy: Always
+              name: golang
+              ports:
+                - containerPort: 8080
+                  protocol: TCP
+              resources: {}
+              terminationMessagePath: /dev/termination-log
+              terminationMessagePolicy: File
+          dnsPolicy: ClusterFirst
+          restartPolicy: Always
+          schedulerName: default-scheduler
+          securityContext: {}
+          terminationGracePeriodSeconds: 30
+    status: {}
+  - apiVersion: image.openshift.io/v1
+    kind: ImageStream
+    metadata:
+      creationTimestamp: null
+      labels:
+        move2kube.konveyor.io/service: java-gradle-latest
+      name: java-gradle-latest
+    spec:
+      lookupPolicy:
+        local: false
+      tags:
+        - annotations: null
+          from:
+            kind: DockerImage
+            name: java-gradle
+          generation: null
+          importPolicy: {}
+          name: latest
+          referencePolicy:
+            type: ""
+    status:
+      dockerImageRepository: ""
+  - apiVersion: route.openshift.io/v1
+    kind: Route
+    metadata:
+      creationTimestamp: null
+      labels:
+        move2kube.konveyor.io/service: java-gradle
+      name: java-gradle
+    spec:
+      host: myproject.com
+      path: /java-gradle
+      port:
+        targetPort: port-9080
+      to:
+        kind: Service
+        name: java-gradle
+        weight: 1
+    status:
+      ingress:
+        - {}
+  - apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      creationTimestamp: null
+      labels:
+        move2kube.konveyor.io/service: python
+      name: python
+    spec:
+      progressDeadlineSeconds: 600
+      replicas: ${{COMMON_REPLICAS}}
+      revisionHistoryLimit: 10
+      selector:
+        matchLabels:
+          move2kube.konveyor.io/service: python
+      strategy:
+        rollingUpdate:
+          maxSurge: 25%
+          maxUnavailable: 25%
+        type: RollingUpdate
+      template:
+        metadata:
+          creationTimestamp: null
+          labels:
+            move2kube.konveyor.io/service: python
+          name: python
+        spec:
+          containers:
+            - image: quay.io/myproject/python:latest
+              imagePullPolicy: Always
+              name: python
+              ports:
+                - containerPort: 8080
+                  protocol: TCP
+              resources: {}
+              terminationMessagePath: /dev/termination-log
+              terminationMessagePolicy: File
+          dnsPolicy: ClusterFirst
+          restartPolicy: Always
+          schedulerName: default-scheduler
+          securityContext: {}
+          terminationGracePeriodSeconds: 30
+    status: {}
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      creationTimestamp: null
+      labels:
+        move2kube.konveyor.io/service: python
+      name: python
+    spec:
+      internalTrafficPolicy: Cluster
+      ports:
+        - name: port-8080
+          port: 8080
+          protocol: TCP
+          targetPort: 8080
+      selector:
+        move2kube.konveyor.io/service: python
+      sessionAffinity: None
+      type: ClusterIP
+    status:
+      loadBalancer: {}
+  - apiVersion: image.openshift.io/v1
+    kind: ImageStream
+    metadata:
+      creationTimestamp: null
+      labels:
+        move2kube.konveyor.io/service: golang-latest
+      name: golang-latest
+    spec:
+      lookupPolicy:
+        local: false
+      tags:
+        - annotations: null
+          from:
+            kind: DockerImage
+            name: golang
+          generation: null
+          importPolicy: {}
+          name: latest
+          referencePolicy:
+            type: ""
+    status:
+      dockerImageRepository: ""
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      creationTimestamp: null
+      labels:
+        move2kube.konveyor.io/service: php
+      name: php
+    spec:
+      internalTrafficPolicy: Cluster
+      ports:
+        - name: port-8082
+          port: 8082
+          protocol: TCP
+          targetPort: 8082
+      selector:
+        move2kube.konveyor.io/service: php
+      sessionAffinity: None
+      type: ClusterIP
+    status:
+      loadBalancer: {}
+  - apiVersion: image.openshift.io/v1
+    kind: ImageStream
+    metadata:
+      creationTimestamp: null
+      labels:
+        move2kube.konveyor.io/service: ruby-latest
+      name: ruby-latest
+    spec:
+      lookupPolicy:
+        local: false
+      tags:
+        - annotations: null
+          from:
+            kind: DockerImage
+            name: ruby
+          generation: null
+          importPolicy: {}
+          name: latest
+          referencePolicy:
+            type: ""
+    status:
+      dockerImageRepository: ""
   - apiVersion: v1
     kind: Service
     metadata:
@@ -385,67 +733,47 @@ objects:
             type: ""
     status:
       dockerImageRepository: ""
-  - apiVersion: route.openshift.io/v1
-    kind: Route
+  - apiVersion: image.openshift.io/v1
+    kind: ImageStream
     metadata:
       creationTimestamp: null
       labels:
-        move2kube.konveyor.io/service: rust
-      name: rust
+        move2kube.konveyor.io/service: django-latest
+      name: django-latest
     spec:
-      host: https://c130-e.us-south.containers.cloud.ibm.com:30958
-      path: /rust
-      port:
-        targetPort: port-8085
-      to:
-        kind: Service
-        name: rust
-        weight: 1
+      lookupPolicy:
+        local: false
+      tags:
+        - annotations: null
+          from:
+            kind: DockerImage
+            name: django
+          generation: null
+          importPolicy: {}
+          name: latest
+          referencePolicy:
+            type: ""
     status:
-      ingress:
-        - {}
-  - apiVersion: apps/v1
-    kind: Deployment
+      dockerImageRepository: ""
+  - apiVersion: route.openshift.io/v1
+    kind: Route
     metadata:
       creationTimestamp: null
       labels:
         move2kube.konveyor.io/service: django
       name: django
     spec:
-      progressDeadlineSeconds: 600
-      replicas: ${{COMMON_REPLICAS}}
-      revisionHistoryLimit: 10
-      selector:
-        matchLabels:
-          move2kube.konveyor.io/service: django
-      strategy:
-        rollingUpdate:
-          maxSurge: 25%
-          maxUnavailable: 25%
-        type: RollingUpdate
-      template:
-        metadata:
-          creationTimestamp: null
-          labels:
-            move2kube.konveyor.io/service: django
-          name: django
-        spec:
-          containers:
-            - image: quay.io/test/django:latest
-              imagePullPolicy: Always
-              name: django
-              ports:
-                - containerPort: 8080
-                  protocol: TCP
-              resources: {}
-              terminationMessagePath: /dev/termination-log
-              terminationMessagePolicy: File
-          dnsPolicy: ClusterFirst
-          restartPolicy: Always
-          schedulerName: default-scheduler
-          securityContext: {}
-          terminationGracePeriodSeconds: 30
-    status: {}
+      host: myproject.com
+      path: /django
+      port:
+        targetPort: port-8080
+      to:
+        kind: Service
+        name: django
+        weight: 1
+    status:
+      ingress:
+        - {}
   - apiVersion: apps/v1
     kind: Deployment
     metadata:
@@ -473,7 +801,7 @@ objects:
           name: java-war
         spec:
           containers:
-            - image: quay.io/test/java-war:latest
+            - image: quay.io/myproject/java-war:latest
               imagePullPolicy: Always
               name: java-war
               ports:
@@ -488,32 +816,33 @@ objects:
           securityContext: {}
           terminationGracePeriodSeconds: 30
     status: {}
-  - apiVersion: route.openshift.io/v1
-    kind: Route
+  - apiVersion: v1
+    kind: Service
     metadata:
       creationTimestamp: null
       labels:
         move2kube.konveyor.io/service: java-war
       name: java-war
     spec:
-      host: https://c130-e.us-south.containers.cloud.ibm.com:30958
-      path: /java-war
-      port:
-        targetPort: port-9080
-      to:
-        kind: Service
-        name: java-war
-        weight: 1
+      internalTrafficPolicy: Cluster
+      ports:
+        - name: port-9080
+          port: 9080
+          protocol: TCP
+          targetPort: 9080
+      selector:
+        move2kube.konveyor.io/service: java-war
+      sessionAffinity: None
+      type: ClusterIP
     status:
-      ingress:
-        - {}
+      loadBalancer: {}
   - apiVersion: image.openshift.io/v1
     kind: ImageStream
     metadata:
       creationTimestamp: null
       labels:
-        move2kube.konveyor.io/service: python-latest
-      name: python-latest
+        move2kube.konveyor.io/service: java-maven-latest
+      name: java-maven-latest
     spec:
       lookupPolicy:
         local: false
@@ -521,7 +850,7 @@ objects:
         - annotations: null
           from:
             kind: DockerImage
-            name: python
+            name: java-maven
           generation: null
           importPolicy: {}
           name: latest
@@ -529,41 +858,128 @@ objects:
             type: ""
     status:
       dockerImageRepository: ""
-  - apiVersion: route.openshift.io/v1
-    kind: Route
+  - apiVersion: image.openshift.io/v1
+    kind: ImageStream
+    metadata:
+      creationTimestamp: null
+      labels:
+        move2kube.konveyor.io/service: php-latest
+      name: php-latest
+    spec:
+      lookupPolicy:
+        local: false
+      tags:
+        - annotations: null
+          from:
+            kind: DockerImage
+            name: php
+          generation: null
+          importPolicy: {}
+          name: latest
+          referencePolicy:
+            type: ""
+    status:
+      dockerImageRepository: ""
+  - apiVersion: apps/v1
+    kind: Deployment
     metadata:
       creationTimestamp: null
       labels:
         move2kube.konveyor.io/service: ruby
       name: ruby
     spec:
-      host: https://c130-e.us-south.containers.cloud.ibm.com:30958
-      path: /ruby
-      port:
-        targetPort: port-8080
-      to:
-        kind: Service
-        name: ruby
-        weight: 1
-    status:
-      ingress:
-        - {}
+      progressDeadlineSeconds: 600
+      replicas: ${{COMMON_REPLICAS}}
+      revisionHistoryLimit: 10
+      selector:
+        matchLabels:
+          move2kube.konveyor.io/service: ruby
+      strategy:
+        rollingUpdate:
+          maxSurge: 25%
+          maxUnavailable: 25%
+        type: RollingUpdate
+      template:
+        metadata:
+          creationTimestamp: null
+          labels:
+            move2kube.konveyor.io/service: ruby
+          name: ruby
+        spec:
+          containers:
+            - image: quay.io/myproject/ruby:latest
+              imagePullPolicy: Always
+              name: ruby
+              ports:
+                - containerPort: 8080
+                  protocol: TCP
+              resources: {}
+              terminationMessagePath: /dev/termination-log
+              terminationMessagePolicy: File
+          dnsPolicy: ClusterFirst
+          restartPolicy: Always
+          schedulerName: default-scheduler
+          securityContext: {}
+          terminationGracePeriodSeconds: 30
+    status: {}
+  - apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      creationTimestamp: null
+      labels:
+        move2kube.konveyor.io/service: java-maven
+      name: java-maven
+    spec:
+      progressDeadlineSeconds: 600
+      replicas: ${{COMMON_REPLICAS}}
+      revisionHistoryLimit: 10
+      selector:
+        matchLabels:
+          move2kube.konveyor.io/service: java-maven
+      strategy:
+        rollingUpdate:
+          maxSurge: 25%
+          maxUnavailable: 25%
+        type: RollingUpdate
+      template:
+        metadata:
+          creationTimestamp: null
+          labels:
+            move2kube.konveyor.io/service: java-maven
+          name: java-maven
+        spec:
+          containers:
+            - image: quay.io/myproject/java-maven:latest
+              imagePullPolicy: Always
+              name: java-maven
+              ports:
+                - containerPort: 9080
+                  protocol: TCP
+              resources: {}
+              terminationMessagePath: /dev/termination-log
+              terminationMessagePolicy: File
+          dnsPolicy: ClusterFirst
+          restartPolicy: Always
+          schedulerName: default-scheduler
+          securityContext: {}
+          terminationGracePeriodSeconds: 30
+    status: {}
   - apiVersion: v1
     kind: Service
     metadata:
       creationTimestamp: null
       labels:
-        move2kube.konveyor.io/service: rust
-      name: rust
+        move2kube.konveyor.io/service: java-maven
+      name: java-maven
     spec:
       internalTrafficPolicy: Cluster
       ports:
-        - name: port-8085
-          port: 8085
+        - name: port-9080
+          port: 9080
           protocol: TCP
-          targetPort: 8085
+          targetPort: 9080
       selector:
-        move2kube.konveyor.io/service: rust
+        move2kube.konveyor.io/service: java-maven
       sessionAffinity: None
       type: ClusterIP
     status:
@@ -595,7 +1011,7 @@ objects:
           name: nodejs
         spec:
           containers:
-            - image: quay.io/test/nodejs:latest
+            - image: quay.io/myproject/nodejs:latest
               imagePullPolicy: Always
               name: nodejs
               ports:
@@ -610,361 +1026,6 @@ objects:
           securityContext: {}
           terminationGracePeriodSeconds: 30
     status: {}
-  - apiVersion: image.openshift.io/v1
-    kind: ImageStream
-    metadata:
-      creationTimestamp: null
-      labels:
-        move2kube.konveyor.io/service: golang-latest
-      name: golang-latest
-    spec:
-      lookupPolicy:
-        local: false
-      tags:
-        - annotations: null
-          from:
-            kind: DockerImage
-            name: golang
-          generation: null
-          importPolicy: {}
-          name: latest
-          referencePolicy:
-            type: ""
-    status:
-      dockerImageRepository: ""
-  - apiVersion: image.openshift.io/v1
-    kind: ImageStream
-    metadata:
-      creationTimestamp: null
-      labels:
-        move2kube.konveyor.io/service: java-gradle-latest
-      name: java-gradle-latest
-    spec:
-      lookupPolicy:
-        local: false
-      tags:
-        - annotations: null
-          from:
-            kind: DockerImage
-            name: java-gradle
-          generation: null
-          importPolicy: {}
-          name: latest
-          referencePolicy:
-            type: ""
-    status:
-      dockerImageRepository: ""
-  - apiVersion: route.openshift.io/v1
-    kind: Route
-    metadata:
-      creationTimestamp: null
-      labels:
-        move2kube.konveyor.io/service: java-gradle
-      name: java-gradle
-    spec:
-      host: https://c130-e.us-south.containers.cloud.ibm.com:30958
-      path: /java-gradle
-      port:
-        targetPort: port-9080
-      to:
-        kind: Service
-        name: java-gradle
-        weight: 1
-    status:
-      ingress:
-        - {}
-  - apiVersion: apps/v1
-    kind: Deployment
-    metadata:
-      creationTimestamp: null
-      labels:
-        move2kube.konveyor.io/service: java-maven
-      name: java-maven
-    spec:
-      progressDeadlineSeconds: 600
-      replicas: ${{COMMON_REPLICAS}}
-      revisionHistoryLimit: 10
-      selector:
-        matchLabels:
-          move2kube.konveyor.io/service: java-maven
-      strategy:
-        rollingUpdate:
-          maxSurge: 25%
-          maxUnavailable: 25%
-        type: RollingUpdate
-      template:
-        metadata:
-          creationTimestamp: null
-          labels:
-            move2kube.konveyor.io/service: java-maven
-          name: java-maven
-        spec:
-          containers:
-            - image: quay.io/test/java-maven:latest
-              imagePullPolicy: Always
-              name: java-maven
-              ports:
-                - containerPort: 9080
-                  protocol: TCP
-              resources: {}
-              terminationMessagePath: /dev/termination-log
-              terminationMessagePolicy: File
-          dnsPolicy: ClusterFirst
-          restartPolicy: Always
-          schedulerName: default-scheduler
-          securityContext: {}
-          terminationGracePeriodSeconds: 30
-    status: {}
-  - apiVersion: image.openshift.io/v1
-    kind: ImageStream
-    metadata:
-      creationTimestamp: null
-      labels:
-        move2kube.konveyor.io/service: java-maven-latest
-      name: java-maven-latest
-    spec:
-      lookupPolicy:
-        local: false
-      tags:
-        - annotations: null
-          from:
-            kind: DockerImage
-            name: java-maven
-          generation: null
-          importPolicy: {}
-          name: latest
-          referencePolicy:
-            type: ""
-    status:
-      dockerImageRepository: ""
-  - apiVersion: image.openshift.io/v1
-    kind: ImageStream
-    metadata:
-      creationTimestamp: null
-      labels:
-        move2kube.konveyor.io/service: django-latest
-      name: django-latest
-    spec:
-      lookupPolicy:
-        local: false
-      tags:
-        - annotations: null
-          from:
-            kind: DockerImage
-            name: django
-          generation: null
-          importPolicy: {}
-          name: latest
-          referencePolicy:
-            type: ""
-    status:
-      dockerImageRepository: ""
-  - apiVersion: v1
-    kind: Service
-    metadata:
-      creationTimestamp: null
-      labels:
-        move2kube.konveyor.io/service: golang
-      name: golang
-    spec:
-      internalTrafficPolicy: Cluster
-      ports:
-        - name: port-8080
-          port: 8080
-          protocol: TCP
-          targetPort: 8080
-      selector:
-        move2kube.konveyor.io/service: golang
-      sessionAffinity: None
-      type: ClusterIP
-    status:
-      loadBalancer: {}
-  - apiVersion: apps/v1
-    kind: Deployment
-    metadata:
-      creationTimestamp: null
-      labels:
-        move2kube.konveyor.io/service: php
-      name: php
-    spec:
-      progressDeadlineSeconds: 600
-      replicas: ${{COMMON_REPLICAS}}
-      revisionHistoryLimit: 10
-      selector:
-        matchLabels:
-          move2kube.konveyor.io/service: php
-      strategy:
-        rollingUpdate:
-          maxSurge: 25%
-          maxUnavailable: 25%
-        type: RollingUpdate
-      template:
-        metadata:
-          creationTimestamp: null
-          labels:
-            move2kube.konveyor.io/service: php
-          name: php
-        spec:
-          containers:
-            - image: quay.io/test/php:latest
-              imagePullPolicy: Always
-              name: php
-              ports:
-                - containerPort: 8082
-                  protocol: TCP
-              resources: {}
-              terminationMessagePath: /dev/termination-log
-              terminationMessagePolicy: File
-          dnsPolicy: ClusterFirst
-          restartPolicy: Always
-          schedulerName: default-scheduler
-          securityContext: {}
-          terminationGracePeriodSeconds: 30
-    status: {}
-  - apiVersion: apps/v1
-    kind: Deployment
-    metadata:
-      creationTimestamp: null
-      labels:
-        move2kube.konveyor.io/service: python
-      name: python
-    spec:
-      progressDeadlineSeconds: 600
-      replicas: ${{COMMON_REPLICAS}}
-      revisionHistoryLimit: 10
-      selector:
-        matchLabels:
-          move2kube.konveyor.io/service: python
-      strategy:
-        rollingUpdate:
-          maxSurge: 25%
-          maxUnavailable: 25%
-        type: RollingUpdate
-      template:
-        metadata:
-          creationTimestamp: null
-          labels:
-            move2kube.konveyor.io/service: python
-          name: python
-        spec:
-          containers:
-            - image: quay.io/test/python:latest
-              imagePullPolicy: Always
-              name: python
-              ports:
-                - containerPort: 8080
-                  protocol: TCP
-              resources: {}
-              terminationMessagePath: /dev/termination-log
-              terminationMessagePolicy: File
-          dnsPolicy: ClusterFirst
-          restartPolicy: Always
-          schedulerName: default-scheduler
-          securityContext: {}
-          terminationGracePeriodSeconds: 30
-    status: {}
-  - apiVersion: v1
-    kind: Service
-    metadata:
-      creationTimestamp: null
-      labels:
-        move2kube.konveyor.io/service: java-maven
-      name: java-maven
-    spec:
-      internalTrafficPolicy: Cluster
-      ports:
-        - name: port-9080
-          port: 9080
-          protocol: TCP
-          targetPort: 9080
-      selector:
-        move2kube.konveyor.io/service: java-maven
-      sessionAffinity: None
-      type: ClusterIP
-    status:
-      loadBalancer: {}
-  - apiVersion: v1
-    kind: Service
-    metadata:
-      creationTimestamp: null
-      labels:
-        move2kube.konveyor.io/service: nodejs
-      name: nodejs
-    spec:
-      internalTrafficPolicy: Cluster
-      ports:
-        - name: port-8080
-          port: 8080
-          protocol: TCP
-          targetPort: 8080
-      selector:
-        move2kube.konveyor.io/service: nodejs
-      sessionAffinity: None
-      type: ClusterIP
-    status:
-      loadBalancer: {}
-  - apiVersion: apps/v1
-    kind: Deployment
-    metadata:
-      creationTimestamp: null
-      labels:
-        move2kube.konveyor.io/service: ruby
-      name: ruby
-    spec:
-      progressDeadlineSeconds: 600
-      replicas: ${{COMMON_REPLICAS}}
-      revisionHistoryLimit: 10
-      selector:
-        matchLabels:
-          move2kube.konveyor.io/service: ruby
-      strategy:
-        rollingUpdate:
-          maxSurge: 25%
-          maxUnavailable: 25%
-        type: RollingUpdate
-      template:
-        metadata:
-          creationTimestamp: null
-          labels:
-            move2kube.konveyor.io/service: ruby
-          name: ruby
-        spec:
-          containers:
-            - image: quay.io/test/ruby:latest
-              imagePullPolicy: Always
-              name: ruby
-              ports:
-                - containerPort: 8080
-                  protocol: TCP
-              resources: {}
-              terminationMessagePath: /dev/termination-log
-              terminationMessagePolicy: File
-          dnsPolicy: ClusterFirst
-          restartPolicy: Always
-          schedulerName: default-scheduler
-          securityContext: {}
-          terminationGracePeriodSeconds: 30
-    status: {}
-  - apiVersion: v1
-    kind: Service
-    metadata:
-      creationTimestamp: null
-      labels:
-        move2kube.konveyor.io/service: java-gradle
-      name: java-gradle
-    spec:
-      internalTrafficPolicy: Cluster
-      ports:
-        - name: port-9080
-          port: 9080
-          protocol: TCP
-          targetPort: 9080
-      selector:
-        move2kube.konveyor.io/service: java-gradle
-      sessionAffinity: None
-      type: ClusterIP
-    status:
-      loadBalancer: {}
   - apiVersion: image.openshift.io/v1
     kind: ImageStream
     metadata:
@@ -987,67 +1048,6 @@ objects:
             type: ""
     status:
       dockerImageRepository: ""
-  - apiVersion: image.openshift.io/v1
-    kind: ImageStream
-    metadata:
-      creationTimestamp: null
-      labels:
-        move2kube.konveyor.io/service: php-latest
-      name: php-latest
-    spec:
-      lookupPolicy:
-        local: false
-      tags:
-        - annotations: null
-          from:
-            kind: DockerImage
-            name: php
-          generation: null
-          importPolicy: {}
-          name: latest
-          referencePolicy:
-            type: ""
-    status:
-      dockerImageRepository: ""
-  - apiVersion: route.openshift.io/v1
-    kind: Route
-    metadata:
-      creationTimestamp: null
-      labels:
-        move2kube.konveyor.io/service: php
-      name: php
-    spec:
-      host: https://c130-e.us-south.containers.cloud.ibm.com:30958
-      path: /php
-      port:
-        targetPort: port-8082
-      to:
-        kind: Service
-        name: php
-        weight: 1
-    status:
-      ingress:
-        - {}
-  - apiVersion: v1
-    kind: Service
-    metadata:
-      creationTimestamp: null
-      labels:
-        move2kube.konveyor.io/service: php
-      name: php
-    spec:
-      internalTrafficPolicy: Cluster
-      ports:
-        - name: port-8082
-          port: 8082
-          protocol: TCP
-          targetPort: 8082
-      selector:
-        move2kube.konveyor.io/service: php
-      sessionAffinity: None
-      type: ClusterIP
-    status:
-      loadBalancer: {}
 parameters:
   - name: COMMON_REPLICAS
     value: "2"

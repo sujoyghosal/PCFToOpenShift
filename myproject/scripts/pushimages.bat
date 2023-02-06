@@ -36,7 +36,7 @@ GOTO REGISTRY
 
 :DEFAULT_REGISTRY
     SET REGISTRY_URL=quay.io
-    SET REGISTRY_NAMESPACE=test
+    SET REGISTRY_NAMESPACE=myproject
 	GOTO DOCKER_CONTAINER_RUNTIME
 
 :DOCKER_CONTAINER_RUNTIME
@@ -94,6 +94,14 @@ echo "pushing image php"
 echo "pushing image nodejs"
 %CONTAINER_RUNTIME% tag nodejs %REGISTRY_URL%/%REGISTRY_NAMESPACE%/nodejs
 %CONTAINER_RUNTIME% push %REGISTRY_URL%/%REGISTRY_NAMESPACE%/nodejs
+
+echo "pushing image java-maven-buildstage"
+%CONTAINER_RUNTIME% tag java-maven-buildstage %REGISTRY_URL%/%REGISTRY_NAMESPACE%/java-maven-buildstage
+%CONTAINER_RUNTIME% push %REGISTRY_URL%/%REGISTRY_NAMESPACE%/java-maven-buildstage
+
+echo "pushing image java-gradle-buildstage"
+%CONTAINER_RUNTIME% tag java-gradle-buildstage %REGISTRY_URL%/%REGISTRY_NAMESPACE%/java-gradle-buildstage
+%CONTAINER_RUNTIME% push %REGISTRY_URL%/%REGISTRY_NAMESPACE%/java-gradle-buildstage
 
 echo "done"
 

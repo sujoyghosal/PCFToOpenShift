@@ -13,7 +13,7 @@ spec:
             creationTimestamp: null
         spec:
             containers:
-                - image: quay.io/test/rust:latest
+                - image: quay.io/myproject/rust:latest
                   imagePullPolicy: Always
                   name: rust
                   ports:

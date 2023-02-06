@@ -46,7 +46,7 @@ GOTO REGISTRY
 
 :DEFAULT_REGISTRY
     SET REGISTRY_URL=quay.io
-    SET REGISTRY_NAMESPACE=test
+    SET REGISTRY_NAMESPACE=myproject
 	GOTO MAIN
 
 :MAIN
@@ -56,6 +56,16 @@ GOTO REGISTRY
 echo "building and pushing image golang"
 pushd source\golang
 docker buildx build --platform ${PLATFORMS} -f Dockerfile --push --tag ${REGISTRY_URL}/${REGISTRY_NAMESPACE}/golang .
+popd
+
+echo "building and pushing image java-gradle-buildstage"
+pushd source\java-gradle
+docker buildx build --platform ${PLATFORMS} -f Dockerfile.buildstage --push --tag ${REGISTRY_URL}/${REGISTRY_NAMESPACE}/java-gradle-buildstage .
+popd
+
+echo "building and pushing image java-maven-buildstage"
+pushd source\java-maven
+docker buildx build --platform ${PLATFORMS} -f Dockerfile.buildstage --push --tag ${REGISTRY_URL}/${REGISTRY_NAMESPACE}/java-maven-buildstage .
 popd
 
 echo "building and pushing image nodejs"

@@ -6,7 +6,7 @@ metadata:
     move2kube.konveyor.io/service: golang
   name: golang
 spec:
-  host: https://c130-e.us-south.containers.cloud.ibm.com:30958
+  host: myproject.com
   path: /golang
   port:
     targetPort: port-8080
