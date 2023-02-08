@@ -347,8 +347,8 @@ app.get("/eventsbyemailandtype", (req, res) => {
 app.post("/events/insert", (req, res) => {
   console.log("Received array " + JSON.stringify(req.body));
   eventDocument = {
-    email: req.body.email,
-    time_created: Date().toString(),
+    scan_id: req.body.scan_id,
+    time_created: req.body.timestamp,
     event_type: "top level scan",
     file_type: req.body.type,
     file_number: req.body.file_number,
