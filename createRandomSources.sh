@@ -1,25 +1,36 @@
 echo "Creating Node.js sample projects"
 echo "How many projects do you want?"
 read answer
-low=4000
-high=900000
+low=2
+high=9
 i=0
 j=0
 rm -rf node-samples
+dependencies=(http express mongodb fs cors body-parser socket.io bcrypt request)
 mkdir node-samples
 while [ "$i" -lt "$answer" ]
 do
 	#rand=$((low + RANDOM%(1+high-low)))
 	rand=$((5000 + $RANDOM ))
 	mkdir "node-samples/project$rand"
-		echo "const http = require(\"http\");">node-samples/project$rand/node-sample-code$rand.js
-		echo "const http = require(\"express\");">>node-samples/project$rand/node-sample-code$rand.js
-		echo "const http = require(\"mongodb\");">>node-samples/project$rand/node-sample-code$rand.js
-		echo "const http = require(\"fs\");">>node-samples/project$rand/node-sample-code$rand.js
-		echo "const http = require(\"cors\");">>node-samples/project$rand/node-sample-code$rand.js
-		echo "const http = require(\"body-parser\");">>node-samples/project$rand/node-sample-code$rand.js
+		#echo "const http = require(\"http\");">node-samples/project$rand/node-sample-code$rand.js
+		#echo "const http = require(\"express\");">>node-samples/project$rand/node-sample-code$rand.js
+		#echo "const http = require(\"mongodb\");">>node-samples/project$rand/node-sample-code$rand.js
+		#echo "const http = require(\"fs\");">>node-samples/project$rand/node-sample-code$rand.js
+		#echo "const http = require(\"cors\");">>node-samples/project$rand/node-sample-code$rand.js
+		#echo "const http = require(\"body-parser\");">>node-samples/project$rand/node-sample-code$rand.js
 		echo "const PORT = process.env.PORT || $rand;">>node-samples/project$rand/node-sample-code$rand.js
-	while [ $j -lt 3 ]
+		deps_count=`echo $((low + RANDOM%(1+high-low)))`
+		while [ $j -lt $deps_count ]
+		do
+			d=`echo ${dependencies[$j]}`
+			echo "Index=$deps_count, element=$d"
+			echo "const $d = require(\"$d\");">>node-samples/project$rand/node-sample-code$rand.js
+			j=`expr $j + 1`
+		done
+		j=0
+		var_count=`echo $((low + RANDOM%(1+high-low)))`
+	while [ $j -lt $var_count ]
 	do
 		#a=$((low + RANDOM%(1+high-low)))
 		a=$((2000 + $RANDOM ))

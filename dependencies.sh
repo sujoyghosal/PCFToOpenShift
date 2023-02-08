@@ -8,7 +8,7 @@ rbfilescount=
 phpfiles=
 phpfilescount=
 email=$1
-rm -rf scan_results
+rm -rf scan_results.json
 rm -rf obj_final
 deps=
 echo "Welcome to the Discovery app for migration"
@@ -26,6 +26,8 @@ rm -rf /tmp/vcap_env_vars
 find $answer -name *.js|grep -v node_modules>/tmp/jsout
 if [ -s /tmp/jsout ] 
 then
+	id=`echo $RANDOM`
+	time=`date`
 	while read line 
 	do
 		f=`echo $line|sed 's/^/"/g'|sed 's/$/",/g'`	
@@ -34,20 +36,23 @@ then
 		e=`grep require\( $line|cut -f2 -d"("|sed 's/[");]//g'`
 		c=`grep require\( $line|wc -l`
 		deps=`jo -p -a $e`
-		env_vars=`grep process.env. $line|sed 's/^.*process.env.//g'`
-		grep process.env. $line|sed 's/^.*process.env.//g'|sed 's/[ |].*$//g'>>/tmp/env_vars
+		#env_vars=`grep process.env. $line|sed 's/^.*process.env.//g'`
+		env_vars=`grep process.env. $line|sed 's/^.*process.env.//g'|sed 's/[ |].*$//g'`
+		grep process.env. $line|sed 's/^.*process.env.//g'|sed 's/[ |].*$//g'>/tmp/env_vars
 		env_vars_count=`cat /tmp/env_vars|sort|uniq|wc -l`
-		env_vars=`jo -p -a "$env_vars"`
+		env_vars=`jo -p -a $env_vars`
 		#VCAP references
-		vcap_env_vars=`grep VCAP_ $line`
-		grep VCAP_ $line>>/tmp/vcap_env_vars
+		vcap_env_vars=`grep VCAP_ $line|sed 's/^.*process.env.//g'|sed 's/[ |].*$//g'`
+		grep VCAP_ $line>/tmp/vcap_env_vars
 		vcap_env_vars_count=`cat /tmp/vcap_env_vars|sort|uniq|wc -l`
-		vcap_env_vars=`jo -p -a "$vcap_env_vars"`
+		vcap_env_vars=`jo -p -a $vcap_env_vars`
 
 		depsjson=`jo -p type=javascript file="$line" dependencies="$deps" count_of_dependencies="$c" env_vars="$env_vars" env_vars_count="$env_vars_count" vcap_env_vars="$vcap_env_vars" vcap_env_vars_count="$vcap_env_vars_count"`
 		#deps_array=`jo -p -a "$deps_array" "$depsjson"`
 		i=`expr $i + 1`
-		obj="{ \"email\": \"$email\", \"type\": \"javascript\", \"results\": $depsjson, \"file_number\": $i }"
+		#obj="{ \"email\": \"$email\", \"type\": \"javascript\", \"results\": $depsjson, \"file_number\": $i }"
+		#obj="{  \"file_number\": $i, \"results\": $depsjson  }"
+		obj=`jo -p type=javascript scan_id=$id timestamp="$time" file_number=$i results="$depsjson"`
 		echo $obj>>obj_final
 		curl --location --request POST 'http://localhost:5555/events/insert' \
 		--header 'Content-Type: application/json' \
@@ -55,18 +60,17 @@ then
 		deps_array=$deps_array$depsjson","
 	done</tmp/jsout
 	deps_array=`echo $deps_array|sed 's/,$//g'`"]"
-	echo "Deps Array=$deps_array"
+	echo "Deps Array=$deps_array">scan_results.json
 	jsfilescount=`wc -l /tmp/jsout|awk '{print $1}'`
 	echo "Found $jsfilescount JavaScript files"
-	jsfiles=`jo -p -a "$jsfiles"`
-	#jsjson=`jo -p type=javascript files="$jsfiles" count=$jsfilescount dependencies="$deps_array" email=$email`
-	jsjson=`jo -p type=javascript  files_count=$jsfilescount dependencies="$deps_array" email=$email`
-	scan_array=$scan_array$jsjson
+	jsjson=`jo -p scan_id=$id  timestamp="$time" files_count=$jsfilescount results="$deps_array"`
 	echo ":)"
+	echo $jsjson>results.json
 fi
+exit
 echo "Checking package.json files..."
 pjjson={}
-find $answer -name package.json|grep -v node_modules>/tmp/pjout
+#find $answer -name package.json|grep -v node_modules>/tmp/pjout
 if [ -s /tmp/pjout ] 
 then
 	while read line 
@@ -250,9 +254,9 @@ then
 	echo ":)"
 fi
 scan_array=$scan_array"]"
-#echo $scan_array
-obj="{ \"email\": \"$email\", \"results\": $scan_array }"
-#echo $obj|tee scan_results.json
+id=`echo $RANDOM`
+obj="{ \"id\": \"$id\", \"results\": $scan_array }"
+echo $obj>tee scan_results.json
 #curl --location --request POST 'http://localhost:5555/events/insert' \
 #	--header 'Content-Type: application/json' \
 #	--data-raw "$obj"
